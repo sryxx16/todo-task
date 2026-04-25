@@ -14,7 +14,11 @@ import {
   Plus
 } from "lucide-react";
 
-const Sidebar = () => {
+interface SidebarProps {
+  onQuickAdd: (tab: 'task' | 'course') => void;
+}
+
+const Sidebar: React.FC<SidebarProps> = ({ onQuickAdd }) => {
   const location = useLocation();
   
   const menuItems = [
@@ -35,10 +39,16 @@ const Sidebar = () => {
             <span className="text-indigo-600">⚡</span> Quick Action
           </h4>
           <div className="space-y-2">
-            <button className="w-full flex items-center justify-center gap-2 py-2 px-3 bg-white text-indigo-600 font-medium rounded-xl border border-indigo-100 shadow-sm hover:shadow-md transition-shadow text-sm">
+            <button 
+              onClick={() => onQuickAdd('task')}
+              className="w-full flex items-center justify-center gap-2 py-2 px-3 bg-white text-indigo-600 font-medium rounded-xl border border-indigo-100 shadow-sm hover:shadow-md transition-shadow text-sm"
+            >
               <Plus size={16} /> Tambah Tugas
             </button>
-            <button className="w-full flex items-center justify-center gap-2 py-2 px-3 bg-white text-emerald-600 font-medium rounded-xl border border-emerald-100 shadow-sm hover:shadow-md transition-shadow text-sm">
+            <button 
+              onClick={() => onQuickAdd('course')}
+              className="w-full flex items-center justify-center gap-2 py-2 px-3 bg-white text-emerald-600 font-medium rounded-xl border border-emerald-100 shadow-sm hover:shadow-md transition-shadow text-sm"
+            >
               <Plus size={16} /> Tambah Mata Kuliah
             </button>
           </div>

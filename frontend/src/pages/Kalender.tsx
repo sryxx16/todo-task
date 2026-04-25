@@ -1,8 +1,86 @@
-import { Plus } from "lucide-react";
+import { useEffect, useState } from 'react';
+import { taskApi, courseApi, type Task, type Course } from '../services/api';
+import { CalendarIcon, Plus, ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react';
+
+const getDaysLeft = (d: string) => Math.ceil((new Date(d).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+const getDaysLeftColor = (days: number) => days <= 2 ? 'text-red-500' : days <= 7 ? 'text-amber-500' : 'text-emerald-500';
+const formatDate = (d: string) => new Date(d).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
+
+const MONTHS = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+const DAYS_SHORT = ['Sen','Sel','Rab','Kam','Jum','Sab','Min'];
+
+interface CalendarEvent { task: Task; date: number }
+
+const priorityColor = (p: Task['priority']) =>
+  p === 'Tinggi' ? { dot: 'bg-red-500', bg: 'bg-red-50 border-red-100 text-red-700' } :
+  p === 'Sedang' ? { dot: 'bg-amber-500', bg: 'bg-amber-50 border-amber-100 text-amber-700' } :
+  { dot: 'bg-emerald-500', bg: 'bg-emerald-50 border-emerald-100 text-emerald-700' };
 
 const Kalender = () => {
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [courses, setCourses] = useState<Course[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [currentDate, setCurrentDate] = useState(new Date());
+  const [view, setView] = useState<'Bulan' | 'Minggu' | 'Hari'>('Bulan');
+
+  useEffect(() => {
+    const fetchAll = async () => {
+      try {
+        const [tRes, cRes] = await Promise.all([taskApi.getAll(), courseApi.getAll()]);
+        setTasks(tRes.data.data);
+        setCourses(cRes.data.data);
+      } catch (e) { console.error(e); }
+      finally { setLoading(false); }
+    };
+    fetchAll();
+  }, []);
+
+  const year = currentDate.getFullYear();
+  const month = currentDate.getMonth();
+  const today = new Date();
+  const isToday = (d: number) => today.getFullYear() === year && today.getMonth() === month && today.getDate() === d;
+
+  // First day of month (0=Sun, adjust to Mon-first)
+  const firstDow = new Date(year, month, 1).getDay(); // 0=Sun
+  const offset = firstDow === 0 ? 6 : firstDow - 1;
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const daysInPrevMonth = new Date(year, month, 0).getDate();
+  const totalCells = Math.ceil((offset + daysInMonth) / 7) * 7;
+
+  // Build grid cells
+  const cells: { day: number; isCurrentMonth: boolean }[] = [];
+  for (let i = 0; i < totalCells; i++) {
+    if (i < offset) {
+      cells.push({ day: daysInPrevMonth - offset + i + 1, isCurrentMonth: false });
+    } else if (i < offset + daysInMonth) {
+      cells.push({ day: i - offset + 1, isCurrentMonth: true });
+    } else {
+      cells.push({ day: i - offset - daysInMonth + 1, isCurrentMonth: false });
+    }
+  }
+
+  // Map tasks to calendar cells
+  const getTasksForDay = (day: number): Task[] => {
+    return tasks.filter(t => {
+      const d = new Date(t.deadline);
+      return d.getFullYear() === year && d.getMonth() === month && d.getDate() === day;
+    });
+  };
+
+  // Upcoming deadlines
+  const upcoming = [...tasks]
+    .filter(t => t.status !== 'Selesai')
+    .sort((a, b) => new Date(a.deadline).getTime() - new Date(b.deadline).getTime())
+    .slice(0, 5);
+
+  const prevMonth = () => setCurrentDate(new Date(year, month - 1, 1));
+  const nextMonth = () => setCurrentDate(new Date(year, month + 1, 1));
+  const goToday = () => setCurrentDate(new Date());
+
+  const todayStr = new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+
   return (
-    <div className="space-y-6 animate-in fade-in duration-500">
+    <div className="space-y-6 animate-in fade-in duration-500 pb-10">
       {/* Header */}
       <div className="flex justify-between items-start mb-8">
         <div>
@@ -11,229 +89,147 @@ const Kalender = () => {
         </div>
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2 text-slate-500 bg-white px-4 py-2 rounded-lg shadow-sm border border-slate-100">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-            <span className="text-sm font-medium">Rabu, 21 Mei 2026</span>
+            <CalendarIcon size={18} />
+            <span className="text-sm font-medium">{todayStr}</span>
           </div>
-          <div className="flex items-center gap-3 bg-white px-3 py-1.5 rounded-lg shadow-sm border border-slate-100 cursor-pointer">
-            <img src="https://ui-avatars.com/api/?name=Surya&background=0D8ABC&color=fff" alt="Surya" className="w-8 h-8 rounded-full" />
+          <div className="flex items-center gap-3 bg-white px-3 py-1.5 rounded-lg shadow-sm border border-slate-100">
+            <img src="https://ui-avatars.com/api/?name=Surya&background=6366f1&color=fff" alt="Surya" className="w-8 h-8 rounded-full" />
             <span className="font-medium text-slate-700">Surya</span>
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-400"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            <ChevronDown size={16} className="text-slate-400" />
           </div>
         </div>
       </div>
 
       <div className="flex gap-6 items-start">
-        {/* Main Calendar Area */}
+        {/* Main Calendar */}
         <div className="flex-1 bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+          {/* Controls */}
           <div className="flex justify-between items-center mb-6">
-            <div className="flex items-center gap-4">
-              <button className="px-4 py-2 border border-slate-200 rounded-lg text-slate-600 font-medium hover:bg-slate-50 transition-colors">Hari Ini</button>
-              <div className="flex items-center gap-2">
-                <button className="p-2 text-slate-400 hover:text-slate-600">&lt;</button>
-                <h2 className="text-lg font-bold text-slate-800 w-32 text-center">Mei 2026</h2>
-                <button className="p-2 text-slate-400 hover:text-slate-600">&gt;</button>
-              </div>
+            <div className="flex items-center gap-3">
+              <button onClick={goToday} className="px-4 py-2 border border-slate-200 rounded-lg text-slate-600 text-sm font-medium hover:bg-slate-50">Hari Ini</button>
+              <button onClick={prevMonth} className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg"><ChevronLeft size={18} /></button>
+              <h2 className="text-lg font-bold text-slate-800 w-36 text-center">{MONTHS[month]} {year}</h2>
+              <button onClick={nextMonth} className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg"><ChevronRight size={18} /></button>
             </div>
             <div className="flex bg-slate-100 p-1 rounded-xl">
-              <button className="px-4 py-1.5 bg-indigo-600 text-white rounded-lg shadow-sm font-medium text-sm">Bulan</button>
-              <button className="px-4 py-1.5 text-slate-600 hover:bg-white hover:shadow-sm rounded-lg font-medium text-sm transition-all">Minggu</button>
-              <button className="px-4 py-1.5 text-slate-600 hover:bg-white hover:shadow-sm rounded-lg font-medium text-sm transition-all">Hari</button>
+              {(['Bulan','Minggu','Hari'] as const).map(v => (
+                <button key={v} onClick={() => setView(v)}
+                  className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-all ${view===v ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-600 hover:bg-white'}`}>{v}</button>
+              ))}
             </div>
           </div>
 
-          {/* Calendar Grid Header */}
-          <div className="grid grid-cols-7 mb-2">
-            {['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'].map(day => (
-              <div key={day} className="text-center font-semibold text-slate-500 py-2">{day}</div>
-            ))}
+          {/* Day headers */}
+          <div className="grid grid-cols-7 mb-1">
+            {DAYS_SHORT.map(d => <div key={d} className="text-center font-semibold text-slate-500 text-sm py-2">{d}</div>)}
           </div>
 
-          {/* Calendar Grid Body (Mockup) */}
+          {/* Calendar Grid */}
           <div className="grid grid-cols-7 border-t border-l border-slate-100">
-            {Array.from({ length: 35 }).map((_, i) => {
-              const day = i - 3; // Offset to start at May 1 on Friday
-              const isCurrentMonth = day > 0 && day <= 31;
-              const isToday = day === 21;
+            {loading ? Array(35).fill(0).map((_, i) => (
+              <div key={i} className="h-28 border-r border-b border-slate-100 p-2">
+                <div className="w-6 h-6 bg-slate-100 animate-pulse rounded-full mb-2"></div>
+              </div>
+            )) : cells.map((cell, i) => {
+              const dayTasks = cell.isCurrentMonth ? getTasksForDay(cell.day) : [];
+              const isCurrentDay = cell.isCurrentMonth && isToday(cell.day);
               return (
-                <div key={i} className={`h-32 border-r border-b border-slate-100 p-2 ${isCurrentMonth ? '' : 'bg-slate-50/50 text-slate-300'}`}>
-                  <div className={`font-medium mb-1 ${isToday ? 'w-7 h-7 bg-indigo-600 text-white rounded-full flex items-center justify-center' : (isCurrentMonth ? 'text-slate-700' : 'text-slate-400')} ${day === 30 || day === 31 ? 'text-red-500' : ''}`}>
-                    {day > 0 && day <= 31 ? day : (day <= 0 ? 30 + day : day - 31)}
+                <div key={i} className={`h-28 border-r border-b border-slate-100 p-1.5 ${!cell.isCurrentMonth ? 'bg-slate-50/40' : ''} overflow-hidden`}>
+                  <div className={`w-6 h-6 flex items-center justify-center text-xs font-medium mb-1 rounded-full ${isCurrentDay ? 'bg-indigo-600 text-white' : cell.isCurrentMonth ? 'text-slate-700' : 'text-slate-400'}`}>
+                    {cell.day}
                   </div>
-                  {/* Mock Events */}
-                  {day === 5 && (
-                    <div className="bg-emerald-50 border border-emerald-100 text-emerald-600 text-xs p-1.5 rounded-md truncate font-medium">
-                      <div className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>Laporan Basis Data</div>
-                      <div className="text-emerald-400 mt-0.5 ml-3">23:59</div>
-                    </div>
-                  )}
-                  {day === 8 && (
-                    <div className="bg-amber-50 border border-amber-100 text-amber-600 text-xs p-1.5 rounded-md truncate font-medium">
-                      <div className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-amber-500"></span>UI/UX Design</div>
-                      <div className="text-amber-400 mt-0.5 ml-3">23:59</div>
-                    </div>
-                  )}
-                  {day === 10 && (
-                    <div className="bg-red-50 border border-red-100 text-red-600 text-xs p-1.5 rounded-md truncate font-medium">
-                      <div className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-red-500"></span>ERD Database</div>
-                      <div className="text-red-400 mt-0.5 ml-3">23:59</div>
-                    </div>
-                  )}
-                  {day === 12 && (
-                    <div className="bg-indigo-50 border border-indigo-100 text-indigo-600 text-xs p-1.5 rounded-md truncate font-medium">
-                      <div className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>Presentasi IoT</div>
-                      <div className="text-indigo-400 mt-0.5 ml-3">23:59</div>
-                    </div>
-                  )}
-                  {day === 15 && (
-                    <div className="bg-emerald-50 border border-emerald-100 text-emerald-600 text-xs p-1.5 rounded-md truncate font-medium">
-                      <div className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>Normalisasi Database</div>
-                      <div className="text-emerald-400 mt-0.5 ml-3">23:59</div>
-                    </div>
-                  )}
-                  {day === 20 && (
-                    <div className="bg-blue-50 border border-blue-100 text-blue-600 text-xs p-1.5 rounded-md truncate font-medium mt-1">
-                      <div className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-blue-500"></span>Resume Jurnal IoT</div>
-                      <div className="text-blue-400 mt-0.5 ml-3">23:59</div>
-                    </div>
-                  )}
-                  {day === 21 && (
-                    <div className="bg-amber-50 border border-amber-100 text-amber-600 text-xs p-1.5 rounded-md truncate font-medium mt-1">
-                      <div className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-amber-500"></span>Tugas CRUD Laravel</div>
-                      <div className="text-amber-400 mt-0.5 ml-3">23:59</div>
-                    </div>
-                  )}
-                  {day === 28 && (
-                    <div className="bg-red-50 border border-red-100 text-red-600 text-xs p-1.5 rounded-md truncate font-medium mt-1">
-                      <div className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-red-500"></span>Proyek Akhir</div>
-                      <div className="text-red-400 mt-0.5 ml-3">23:59</div>
-                    </div>
-                  )}
+                  <div className="space-y-0.5">
+                    {dayTasks.slice(0, 2).map(t => {
+                      const col = priorityColor(t.priority);
+                      return (
+                        <div key={t.id} className={`text-[10px] p-1 rounded border ${col.bg} truncate`}>
+                          <span className={`inline-block w-1.5 h-1.5 rounded-full ${col.dot} mr-1`}></span>
+                          {t.title}
+                        </div>
+                      );
+                    })}
+                    {dayTasks.length > 2 && <p className="text-[10px] text-slate-400 pl-1">+{dayTasks.length - 2} lagi</p>}
+                  </div>
                 </div>
               );
             })}
           </div>
 
-          <div className="flex items-center gap-6 mt-6 pt-4 border-t border-slate-100 text-sm">
-            <div className="flex items-center gap-2"><span className="w-3 h-3 rounded-full bg-slate-300"></span><span className="text-slate-600">Belum Dikerjakan</span></div>
-            <div className="flex items-center gap-2"><span className="w-3 h-3 rounded-full bg-blue-500"></span><span className="text-slate-600">Proses</span></div>
-            <div className="flex items-center gap-2"><span className="w-3 h-3 rounded-full bg-emerald-500"></span><span className="text-slate-600">Selesai</span></div>
-            <div className="flex items-center gap-2"><span className="w-3 h-3 rounded-full bg-red-500"></span><span className="text-slate-600">Tinggi</span></div>
-            <div className="flex items-center gap-2"><span className="w-3 h-3 rounded-full bg-amber-500"></span><span className="text-slate-600">Sedang</span></div>
-            <div className="flex items-center gap-2"><span className="w-3 h-3 rounded-full bg-emerald-400"></span><span className="text-slate-600">Rendah</span></div>
+          {/* Legend */}
+          <div className="flex items-center gap-6 mt-5 pt-4 border-t border-slate-100 text-xs flex-wrap">
+            {[{color:'bg-red-500',label:'Tinggi'},{color:'bg-amber-500',label:'Sedang'},{color:'bg-emerald-500',label:'Rendah'}].map(l => (
+              <div key={l.label} className="flex items-center gap-2"><span className={`w-3 h-3 rounded-full ${l.color}`}></span><span className="text-slate-600">Prioritas {l.label}</span></div>
+            ))}
           </div>
         </div>
 
         {/* Right Sidebar */}
-        <div className="w-80 space-y-6">
-          <div className="flex justify-end mb-2">
-             <button className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white w-full justify-center py-2.5 rounded-xl font-semibold transition-all shadow-lg shadow-indigo-600/20">
-               <Plus size={20} />
-               Tambah Tugas
-             </button>
-          </div>
-
-          {/* Mini Calendar */}
-          <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
-            <div className="flex justify-between items-center mb-4">
-              <button className="text-slate-400">&lt;</button>
-              <h3 className="font-bold text-slate-800">Mei 2026</h3>
-              <button className="text-slate-400">&gt;</button>
-            </div>
-            <div className="grid grid-cols-7 gap-1 text-center text-xs mb-2">
-              <span className="font-medium text-slate-500">Sen</span><span className="font-medium text-slate-500">Sel</span><span className="font-medium text-slate-500">Rab</span><span className="font-medium text-slate-500">Kam</span><span className="font-medium text-slate-500">Jum</span><span className="font-medium text-slate-500">Sab</span><span className="font-medium text-slate-500">Min</span>
-            </div>
-            <div className="grid grid-cols-7 gap-1 text-center text-sm">
-              {[27, 28, 29, 30, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31].map((d, i) => (
-                <div key={i} className={`p-1.5 rounded-full ${i < 4 ? 'text-slate-300' : 'text-slate-700'} ${d === 21 && i > 3 ? 'bg-indigo-600 text-white font-bold' : ''}`}>
-                  {d}
-                  {d === 8 && i > 3 && <div className="w-1 h-1 bg-amber-500 rounded-full mx-auto mt-0.5"></div>}
-                  {d === 28 && i > 3 && <div className="w-1 h-1 bg-red-500 rounded-full mx-auto mt-0.5"></div>}
-                </div>
-              ))}
-            </div>
-          </div>
+        <div className="w-80 space-y-5 shrink-0">
+          <button className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white w-full justify-center py-2.5 rounded-xl font-semibold shadow-lg shadow-indigo-600/20">
+            <Plus size={20} /> Tambah Tugas
+          </button>
 
           {/* Deadline Terdekat */}
           <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
             <h3 className="font-bold text-slate-800 mb-4">Deadline Terdekat</h3>
-            <div className="space-y-4">
-              <div className="flex gap-3">
-                <div className="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center text-red-500 shrink-0">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-                </div>
-                <div>
-                  <h4 className="font-bold text-slate-800 text-sm">Tugas CRUD Laravel</h4>
-                  <p className="text-xs text-slate-500 mt-0.5">Web Programming 2</p>
-                </div>
-                <div className="ml-auto text-right">
-                  <p className="text-xs font-semibold text-slate-800">30 Apr 2026</p>
-                  <p className="text-xs font-semibold text-red-500 mt-0.5">2 hari lagi</p>
-                </div>
+            {loading ? <div className="space-y-3">{[1,2,3].map(i=><div key={i} className="h-14 bg-slate-100 animate-pulse rounded-xl"></div>)}</div>
+            : upcoming.length === 0 ? <p className="text-slate-500 text-sm text-center py-4">Tidak ada deadline 🎉</p>
+            : (
+              <div className="space-y-3">
+                {upcoming.map(t => {
+                  const days = getDaysLeft(t.deadline);
+                  return (
+                    <div key={t.id} className="flex gap-3 items-center">
+                      <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${days <= 2 ? 'bg-red-50 text-red-500' : days <= 7 ? 'bg-amber-50 text-amber-500' : 'bg-emerald-50 text-emerald-500'}`}>
+                        <CalendarIcon size={16} />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h4 className="font-bold text-slate-800 text-sm truncate">{t.title}</h4>
+                        <p className="text-xs text-slate-500 truncate">{t.course?.name}</p>
+                      </div>
+                      <div className="text-right shrink-0">
+                        <p className="text-xs font-semibold text-slate-700">{formatDate(t.deadline)}</p>
+                        <p className={`text-xs font-bold ${getDaysLeftColor(days)}`}>{days} hari</p>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
-              <div className="flex gap-3">
-                <div className="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-500 shrink-0">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-                </div>
-                <div>
-                  <h4 className="font-bold text-slate-800 text-sm">Resume Jurnal IoT</h4>
-                  <p className="text-xs text-slate-500 mt-0.5">Internet of Things</p>
-                </div>
-                <div className="ml-auto text-right">
-                  <p className="text-xs font-semibold text-slate-800">28 Apr 2026</p>
-                  <p className="text-xs font-semibold text-amber-500 mt-0.5">4 hari lagi</p>
-                </div>
-              </div>
-              <div className="flex gap-3">
-                <div className="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center text-red-500 shrink-0">
-                   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-                </div>
-                <div>
-                  <h4 className="font-bold text-slate-800 text-sm">ERD Database</h4>
-                  <p className="text-xs text-slate-500 mt-0.5">Basis Data</p>
-                </div>
-                <div className="ml-auto text-right">
-                  <p className="text-xs font-semibold text-slate-800">1 Mei 2026</p>
-                  <p className="text-xs font-semibold text-amber-500 mt-0.5">7 hari lagi</p>
-                </div>
-              </div>
-              <div className="flex gap-3">
-                <div className="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-500 shrink-0">
-                   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-                </div>
-                <div>
-                  <h4 className="font-bold text-slate-800 text-sm">UI/UX Design</h4>
-                  <p className="text-xs text-slate-500 mt-0.5">Interaksi Manusia & Komputer</p>
-                </div>
-                <div className="ml-auto text-right">
-                  <p className="text-xs font-semibold text-slate-800">3 Mei 2026</p>
-                  <p className="text-xs font-semibold text-emerald-500 mt-0.5">9 hari lagi</p>
-                </div>
-              </div>
-            </div>
-            <button className="w-full text-center text-sm text-indigo-600 font-semibold mt-4 hover:underline">Lihat Semua</button>
+            )}
           </div>
 
           {/* Ringkasan Bulan Ini */}
           <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
             <h3 className="font-bold text-slate-800 mb-4">Ringkasan Bulan Ini</h3>
-            <div className="grid grid-cols-2 gap-3">
-              <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
-                <p className="text-2xl font-bold text-slate-800">24</p>
-                <p className="text-xs text-slate-500">Total Tugas</p>
-              </div>
-              <div className="p-3 bg-emerald-50 rounded-xl border border-emerald-100">
-                <p className="text-2xl font-bold text-emerald-600">9</p>
-                <p className="text-xs text-emerald-600">Selesai</p>
-              </div>
-              <div className="p-3 bg-amber-50 rounded-xl border border-amber-100">
-                <p className="text-2xl font-bold text-amber-600">10</p>
-                <p className="text-xs text-amber-600">Proses</p>
-              </div>
-              <div className="p-3 bg-slate-50 rounded-xl border border-slate-200">
-                <p className="text-2xl font-bold text-slate-600">5</p>
-                <p className="text-xs text-slate-500">Belum Dikerjakan</p>
-              </div>
-            </div>
+            {(() => {
+              const monthTasks = tasks.filter(t => {
+                const d = new Date(t.deadline);
+                return d.getFullYear() === year && d.getMonth() === month;
+              });
+              const selesai = monthTasks.filter(t => t.status === 'Selesai').length;
+              const proses = monthTasks.filter(t => t.status === 'Proses').length;
+              const belum = monthTasks.filter(t => t.status === 'Belum Dikerjakan').length;
+              return (
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="p-3 bg-slate-50 rounded-xl border border-slate-100 text-center">
+                    <p className="text-2xl font-bold text-slate-800">{monthTasks.length}</p>
+                    <p className="text-xs text-slate-500">Total Tugas</p>
+                  </div>
+                  <div className="p-3 bg-emerald-50 rounded-xl border border-emerald-100 text-center">
+                    <p className="text-2xl font-bold text-emerald-600">{selesai}</p>
+                    <p className="text-xs text-emerald-600">Selesai</p>
+                  </div>
+                  <div className="p-3 bg-amber-50 rounded-xl border border-amber-100 text-center">
+                    <p className="text-2xl font-bold text-amber-600">{proses}</p>
+                    <p className="text-xs text-amber-600">Proses</p>
+                  </div>
+                  <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 text-center">
+                    <p className="text-2xl font-bold text-slate-600">{belum}</p>
+                    <p className="text-xs text-slate-500">Belum</p>
+                  </div>
+                </div>
+              );
+            })()}
           </div>
         </div>
       </div>

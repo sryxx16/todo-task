@@ -1,112 +1,114 @@
-import {
-  ClipboardList,
-  Clock,
-  RefreshCw,
-  CheckCircle2,
-  Calendar as CalendarIcon,
-  BookOpen,
-  Wifi,
-  Database,
-  Users,
-  FileText
-} from "lucide-react";
+import { useEffect, useState } from "react";
+import { dashboardApi, courseApi, type DashboardData, type Course } from "../services/api";
+import { ClipboardList, Clock, RefreshCw, CheckCircle2, Calendar as CalendarIcon, BookOpen, Wifi, Database, Users, FileText, CheckCircle, Plus, AlertCircle } from "lucide-react";
+
+const getCourseIcon = (name: string) => {
+  const lower = name.toLowerCase();
+  if (lower.includes('web') || lower.includes('program')) return <BookOpen size={14} />;
+  if (lower.includes('iot') || lower.includes('internet')) return <Wifi size={14} />;
+  if (lower.includes('data') || lower.includes('basis')) return <Database size={14} />;
+  if (lower.includes('manusia') || lower.includes('komputer')) return <Users size={14} />;
+  return <FileText size={14} />;
+};
+
+const iconColors = ['bg-indigo-50 text-indigo-600','bg-red-50 text-red-500','bg-emerald-50 text-emerald-600','bg-amber-50 text-amber-600','bg-blue-50 text-blue-600'];
+
+const getDaysLeft = (deadline: string) => Math.ceil((new Date(deadline).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+const getDaysLeftColor = (days: number) => days <= 2 ? 'text-red-500' : days <= 7 ? 'text-amber-500' : 'text-emerald-500';
+const formatDate = (d: string) => new Date(d).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
 
 const Dashboard = () => {
+  const [dashData, setDashData] = useState<DashboardData | null>(null);
+  const [courses, setCourses] = useState<Course[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchAll = async () => {
+      try {
+        const [dashRes, courseRes] = await Promise.all([dashboardApi.get(), courseApi.getAll()]);
+        setDashData(dashRes.data.data);
+        setCourses(courseRes.data.data);
+      } catch {
+        setError('Gagal memuat data. Pastikan backend Docker sudah berjalan.');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchAll();
+  }, []);
+
+  const stats = dashData?.statistics;
+  const deadlines = dashData?.upcoming_deadlines || [];
+  const today = new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+
+  if (loading) return (
+    <div className="flex flex-col items-center justify-center h-64 gap-4">
+      <div className="w-10 h-10 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
+      <p className="text-slate-500 font-medium">Memuat Dashboard...</p>
+    </div>
+  );
+
+  if (error) return (
+    <div className="flex flex-col items-center justify-center h-64 gap-4 text-center">
+      <AlertCircle size={48} className="text-red-400" />
+      <p className="text-slate-700 font-semibold">{error}</p>
+      <button onClick={() => window.location.reload()} className="px-4 py-2 bg-indigo-600 text-white rounded-xl text-sm font-medium">Coba Lagi</button>
+    </div>
+  );
+
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
-      {/* Header Section */}
+      {/* Header */}
       <div className="flex justify-between items-start mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-slate-800 flex items-center gap-2">
-            Selamat datang, Surya <span className="animate-bounce">👋</span>
-          </h1>
-          <p className="text-slate-500 mt-1">
-            Kelola tugas kuliahmu dengan lebih terstruktur dan produktif.
-          </p>
+          <h1 className="text-3xl font-bold text-slate-800 flex items-center gap-2">Selamat datang, Surya <span className="animate-bounce">👋</span></h1>
+          <p className="text-slate-500 mt-1">Kelola tugas kuliahmu dengan lebih terstruktur dan produktif.</p>
         </div>
-
-        {/* Tanggal & Profil */}
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2 text-slate-500 bg-white px-4 py-2 rounded-lg shadow-sm border border-slate-100">
             <CalendarIcon size={18} />
-            <span className="text-sm font-medium">Rabu, 21 Mei 2026</span>
+            <span className="text-sm font-medium">{today}</span>
           </div>
-          <div className="flex items-center gap-3 bg-white px-3 py-1.5 rounded-lg shadow-sm border border-slate-100 cursor-pointer">
-            <img src="https://ui-avatars.com/api/?name=Surya&background=0D8ABC&color=fff" alt="Surya" className="w-8 h-8 rounded-full" />
+          <div className="flex items-center gap-3 bg-white px-3 py-1.5 rounded-lg shadow-sm border border-slate-100">
+            <img src="https://ui-avatars.com/api/?name=Surya&background=6366f1&color=fff" alt="Surya" className="w-8 h-8 rounded-full" />
             <span className="font-medium text-slate-700">Surya</span>
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-400"><polyline points="6 9 12 15 18 9"></polyline></svg>
           </div>
         </div>
       </div>
 
-      {/* Top Statistic Cards */}
+      {/* Stat Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-        {/* Card 1 */}
+        {[
+          { label: 'Total Tugas', value: stats?.total ?? 0, sub: 'Semua tugas kamu', icon: <ClipboardList size={24} />, color: 'bg-indigo-50 text-indigo-500' },
+          { label: 'Belum Dikerjakan', value: stats?.belum_dikerjakan ?? 0, sub: 'Tugas belum dimulai', icon: <Clock size={24} />, color: 'bg-amber-50 text-amber-500' },
+          { label: 'Sedang Dikerjakan', value: stats?.proses ?? 0, sub: 'Tugas dalam proses', icon: <RefreshCw size={24} />, color: 'bg-blue-50 text-blue-500' },
+          { label: 'Selesai', value: stats?.selesai ?? 0, sub: 'Tugas selesai', icon: <CheckCircle2 size={24} />, color: 'bg-emerald-50 text-emerald-500' },
+        ].map(c => (
+          <div key={c.label} className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
+            <div className="flex items-start gap-3 mb-3">
+              <div className={`p-2.5 ${c.color} rounded-xl shrink-0`}>{c.icon}</div>
+              <p className="text-xs font-semibold text-slate-500 pt-1">{c.label}</p>
+            </div>
+            <h3 className="text-3xl font-bold text-slate-800 mb-1">{c.value}</h3>
+            <p className="text-xs text-slate-500">{c.sub}</p>
+          </div>
+        ))}
+        {/* Deadline card */}
         <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
-          <div className="flex justify-between items-start mb-2">
-             <div className="p-2.5 bg-indigo-50 text-indigo-500 rounded-xl">
-              <ClipboardList size={24} />
-            </div>
-            <p className="text-xs font-semibold text-slate-500">Total Tugas</p>
+          <div className="flex items-start gap-3 mb-3">
+            <div className="p-2.5 bg-red-50 text-red-500 rounded-xl shrink-0"><CalendarIcon size={24} /></div>
+            <p className="text-xs font-semibold text-slate-500 pt-1">Deadline Terdekat</p>
           </div>
-          <h3 className="text-2xl font-bold text-slate-800 mb-1">24</h3>
-          <p className="text-xs text-slate-500 mb-3">Semua tugas kamu</p>
-          <p className="text-xs font-semibold text-emerald-500 flex items-center gap-1">↑ 12% dari minggu lalu</p>
-        </div>
-
-        {/* Card 2 */}
-        <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
-          <div className="flex justify-between items-start mb-2">
-            <div className="p-2.5 bg-amber-50 text-amber-500 rounded-xl">
-              <Clock size={24} />
-            </div>
-            <p className="text-xs font-semibold text-slate-500">Belum Dikerjakan</p>
-          </div>
-          <h3 className="text-2xl font-bold text-slate-800 mb-1">8</h3>
-          <p className="text-xs text-slate-500 mb-3">Tugas belum dimulai</p>
-          <p className="text-xs font-semibold text-emerald-500 flex items-center gap-1">↑ 5% dari minggu lalu</p>
-        </div>
-
-        {/* Card 3 */}
-        <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
-          <div className="flex justify-between items-start mb-2">
-            <div className="p-2.5 bg-blue-50 text-blue-500 rounded-xl">
-              <RefreshCw size={24} />
-            </div>
-            <p className="text-xs font-semibold text-slate-500">Sedang Dikerjakan</p>
-          </div>
-          <h3 className="text-2xl font-bold text-slate-800 mb-1">9</h3>
-          <p className="text-xs text-slate-500 mb-3">Tugas dalam proses</p>
-          <p className="text-xs font-semibold text-emerald-500 flex items-center gap-1">↑ 18% dari minggu lalu</p>
-        </div>
-
-        {/* Card 4 */}
-        <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
-          <div className="flex justify-between items-start mb-2">
-            <div className="p-2.5 bg-emerald-50 text-emerald-500 rounded-xl">
-              <CheckCircle2 size={24} />
-            </div>
-            <p className="text-xs font-semibold text-slate-500">Selesai</p>
-          </div>
-          <h3 className="text-2xl font-bold text-slate-800 mb-1">7</h3>
-          <p className="text-xs text-slate-500 mb-3">Tugas selesai</p>
-          <p className="text-xs font-semibold text-emerald-500 flex items-center gap-1">↑ 25% dari minggu lalu</p>
-        </div>
-
-        {/* Card 5 */}
-        <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 relative overflow-hidden">
-          <div className="absolute -right-4 -top-4 w-20 h-20 bg-red-50 rounded-full opacity-50"></div>
-          <div className="relative">
-            <div className="flex justify-between items-start mb-2">
-              <div className="p-2.5 bg-red-50 text-red-500 rounded-xl">
-                <CalendarIcon size={24} />
-              </div>
-              <p className="text-xs font-semibold text-slate-500">Deadline Terdekat</p>
-            </div>
-            <h3 className="text-2xl font-bold text-red-500 mb-1">2 Hari Lagi</h3>
-            <p className="text-xs text-slate-800 font-medium mb-3">Tugas Web Programming 2</p>
-            <p className="text-xs font-bold text-red-500">30 April 2026</p>
-          </div>
+          {deadlines.length > 0 ? (
+            <>
+              <h3 className="text-xl font-bold text-red-500 mb-1">{getDaysLeft(deadlines[0].deadline)} Hari Lagi</h3>
+              <p className="text-xs text-slate-800 font-medium mb-1 truncate">{deadlines[0].title}</p>
+              <p className="text-xs font-bold text-red-400">{formatDate(deadlines[0].deadline)}</p>
+            </>
+          ) : (
+            <p className="text-sm text-slate-500 mt-2">Tidak ada deadline 🎉</p>
+          )}
         </div>
       </div>
 
@@ -115,39 +117,34 @@ const Dashboard = () => {
         {/* Progress Keseluruhan */}
         <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
           <h2 className="text-lg font-bold text-slate-800 mb-6">Progress Keseluruhan</h2>
-          
           <div className="flex items-center gap-6">
-            <div className="relative flex items-center justify-center w-36 h-36 rounded-full border-[12px] border-indigo-100">
+            <div className="relative flex items-center justify-center w-36 h-36 shrink-0">
+              <svg className="w-36 h-36 transform -rotate-90" viewBox="0 0 144 144">
+                <circle cx="72" cy="72" r="60" stroke="#e2e8f0" strokeWidth="12" fill="transparent" />
+                <circle cx="72" cy="72" r="60" stroke="#6366f1" strokeWidth="12" fill="transparent"
+                  strokeDasharray={`${2 * Math.PI * 60}`}
+                  strokeDashoffset={`${2 * Math.PI * 60 * (1 - (stats?.overall_progress ?? 0) / 100)}`}
+                  strokeLinecap="round" />
+              </svg>
               <div className="absolute flex flex-col items-center">
-                <span className="text-3xl font-black text-slate-800">58%</span>
+                <span className="text-3xl font-black text-slate-800">{stats?.overall_progress ?? 0}%</span>
                 <span className="text-xs text-slate-500 mt-0.5">Total Progres</span>
               </div>
-              <svg className="absolute w-36 h-36 transform -rotate-90">
-                <circle cx="72" cy="72" r="60" stroke="currentColor" strokeWidth="12" fill="transparent" className="text-indigo-600" strokeDasharray="377" strokeDashoffset={377 - (377 * 58) / 100} strokeLinecap="round" />
-              </svg>
             </div>
             <div className="space-y-4 flex-1">
-              <div>
-                <div className="flex justify-between text-xs mb-1">
-                  <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-emerald-500"></span>Selesai</span>
-                  <span className="font-medium">29%</span>
+              {[
+                { label: 'Selesai', color: 'bg-emerald-500', count: stats?.selesai ?? 0 },
+                { label: 'Proses', color: 'bg-blue-500', count: stats?.proses ?? 0 },
+                { label: 'Belum', color: 'bg-amber-500', count: stats?.belum_dikerjakan ?? 0 },
+              ].map(item => (
+                <div key={item.label}>
+                  <div className="flex justify-between text-xs mb-1">
+                    <span className="flex items-center gap-1.5"><span className={`w-2 h-2 rounded-full ${item.color}`}></span>{item.label}</span>
+                    <span className="font-medium">{stats?.total ? Math.round((item.count / stats.total) * 100) : 0}%</span>
+                  </div>
+                  <p className="text-xs text-slate-500 ml-3.5">{item.count} tugas</p>
                 </div>
-                <p className="text-xs text-slate-500 ml-3.5">7 tugas</p>
-              </div>
-              <div>
-                <div className="flex justify-between text-xs mb-1">
-                  <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-blue-500"></span>Proses</span>
-                  <span className="font-medium">37%</span>
-                </div>
-                <p className="text-xs text-slate-500 ml-3.5">9 tugas</p>
-              </div>
-              <div>
-                <div className="flex justify-between text-xs mb-1">
-                  <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-amber-500"></span>Belum Dikerjakan</span>
-                  <span className="font-medium">34%</span>
-                </div>
-                <p className="text-xs text-slate-500 ml-3.5">8 tugas</p>
-              </div>
+              ))}
             </div>
           </div>
           <p className="mt-6 text-sm text-slate-600 font-medium">Terus semangat! 💪</p>
@@ -157,250 +154,74 @@ const Dashboard = () => {
         <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-lg font-bold text-slate-800">Tugas Deadline Terdekat</h2>
-            <button className="text-xs text-indigo-600 font-medium hover:underline">Lihat Semua</button>
           </div>
-          
           <div className="space-y-4">
-            <div className="flex items-center justify-between p-3 border border-slate-100 rounded-xl hover:bg-slate-50 transition-colors">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-red-50 text-red-500 rounded-lg flex items-center justify-center">
-                  <CalendarIcon size={18} />
-                </div>
-                <div>
-                  <h4 className="font-bold text-slate-800 text-sm">Tugas Web Programming 2</h4>
-                  <p className="text-xs text-slate-500">Web Programming 2</p>
-                </div>
+            {deadlines.length === 0 ? (
+              <div className="text-center py-8">
+                <CheckCircle size={40} className="mx-auto text-emerald-300 mb-3" />
+                <p className="text-slate-500 text-sm">Tidak ada deadline mepet! 🎉</p>
               </div>
-              <div className="text-right">
-                <p className="text-xs font-semibold text-slate-800">30 Apr 2026</p>
-                <p className="text-xs font-bold text-red-500 mt-0.5">2 hari lagi</p>
-              </div>
-            </div>
-            
-            <div className="flex items-center justify-between p-3 border border-slate-100 rounded-xl hover:bg-slate-50 transition-colors">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-indigo-50 text-indigo-500 rounded-lg flex items-center justify-center">
-                  <ClipboardList size={18} />
+            ) : deadlines.map(task => {
+              const days = getDaysLeft(task.deadline);
+              return (
+                <div key={task.id} className="flex items-center justify-between p-3 border border-slate-100 rounded-xl hover:bg-slate-50 transition-colors">
+                  <div className="flex items-center gap-3">
+                    <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${days <= 2 ? 'bg-red-50 text-red-500' : days <= 7 ? 'bg-amber-50 text-amber-500' : 'bg-blue-50 text-blue-500'}`}>
+                      <CalendarIcon size={18} />
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-slate-800 text-sm truncate max-w-[140px]">{task.title}</h4>
+                      <p className="text-xs text-slate-500">{task.course?.name}</p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-xs font-semibold text-slate-800">{formatDate(task.deadline)}</p>
+                    <p className={`text-xs font-bold mt-0.5 ${getDaysLeftColor(days)}`}>{days} hari lagi</p>
+                  </div>
                 </div>
-                <div>
-                  <h4 className="font-bold text-slate-800 text-sm">Resume Jurnal IoT</h4>
-                  <p className="text-xs text-slate-500">Internet of Things</p>
-                </div>
-              </div>
-              <div className="text-right">
-                <p className="text-xs font-semibold text-slate-800">28 Apr 2026</p>
-                <p className="text-xs font-bold text-amber-500 mt-0.5">4 hari lagi</p>
-              </div>
-            </div>
-
-            <div className="flex items-center justify-between p-3 border border-slate-100 rounded-xl hover:bg-slate-50 transition-colors">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-blue-50 text-blue-500 rounded-lg flex items-center justify-center">
-                  <ClipboardList size={18} />
-                </div>
-                <div>
-                  <h4 className="font-bold text-slate-800 text-sm">Presentasi IoT</h4>
-                  <p className="text-xs text-slate-500">Internet of Things</p>
-                </div>
-              </div>
-              <div className="text-right">
-                <p className="text-xs font-semibold text-slate-800">2 Mei 2026</p>
-                <p className="text-xs font-bold text-amber-500 mt-0.5">8 hari lagi</p>
-              </div>
-            </div>
-
-            <div className="flex items-center justify-between p-3 border border-slate-100 rounded-xl hover:bg-slate-50 transition-colors">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-emerald-50 text-emerald-500 rounded-lg flex items-center justify-center">
-                  <ClipboardList size={18} />
-                </div>
-                <div>
-                  <h4 className="font-bold text-slate-800 text-sm">Laporan Basis Data</h4>
-                  <p className="text-xs text-slate-500">Basis Data</p>
-                </div>
-              </div>
-              <div className="text-right">
-                <p className="text-xs font-semibold text-slate-800">5 Mei 2026</p>
-                <p className="text-xs font-bold text-emerald-500 mt-0.5">11 hari lagi</p>
-              </div>
-            </div>
+              );
+            })}
           </div>
         </div>
 
         {/* Tugas per Mata Kuliah */}
         <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-lg font-bold text-slate-800">Tugas per Mata Kuliah</h2>
-            <button className="text-xs text-indigo-600 font-medium hover:underline">Lihat Semua</button>
-          </div>
-
-          <div className="space-y-5">
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center"><BookOpen size={14} /></div>
-                  <span className="text-sm font-semibold text-slate-800">Web Programming 2</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <span className="text-xs text-slate-500">70%</span>
-                  <span className="text-xs font-medium">7/10</span>
-                </div>
-              </div>
-              <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
-                <div className="h-full bg-indigo-600 rounded-full" style={{ width: '70%' }}></div>
-              </div>
-            </div>
-
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-lg bg-red-50 text-red-500 flex items-center justify-center"><Wifi size={14} /></div>
-                  <span className="text-sm font-semibold text-slate-800">Internet of Things</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <span className="text-xs text-slate-500">100%</span>
-                  <span className="text-xs font-medium">5/5</span>
-                </div>
-              </div>
-              <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
-                <div className="h-full bg-indigo-600 rounded-full" style={{ width: '100%' }}></div>
-              </div>
-            </div>
-
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center"><Database size={14} /></div>
-                  <span className="text-sm font-semibold text-slate-800">Basis Data</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <span className="text-xs text-slate-500">40%</span>
-                  <span className="text-xs font-medium">2/5</span>
-                </div>
-              </div>
-              <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
-                <div className="h-full bg-slate-300 rounded-full" style={{ width: '40%' }}></div>
-              </div>
-            </div>
-
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center"><Users size={14} /></div>
-                  <span className="text-sm font-semibold text-slate-800">Interaksi Manusia & Komputer</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <span className="text-xs text-slate-500">60%</span>
-                  <span className="text-xs font-medium">3/5</span>
-                </div>
-              </div>
-              <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
-                <div className="h-full bg-slate-300 rounded-full" style={{ width: '60%' }}></div>
-              </div>
-            </div>
-
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center"><FileText size={14} /></div>
-                  <span className="text-sm font-semibold text-slate-800">Proyek Akhir</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <span className="text-xs text-slate-500">20%</span>
-                  <span className="text-xs font-medium">1/5</span>
-                </div>
-              </div>
-              <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
-                <div className="h-full bg-indigo-600 rounded-full" style={{ width: '20%' }}></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Bottom Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Aktivitas Terbaru */}
-        <div className="lg:col-span-2 bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-lg font-bold text-slate-800">Aktivitas Terbaru</h2>
-            <button className="text-xs text-indigo-600 font-medium hover:underline">Lihat Semua</button>
+            <h2 className="text-lg font-bold text-slate-800">Tugas per Mata Kuliah</h2>
           </div>
-          
-          <div className="space-y-6">
-            <div className="flex gap-4">
-              <div className="w-10 h-10 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-500 shrink-0">
-                <CheckCircle2 size={18} />
-              </div>
-              <div className="flex-1 pb-6 border-b border-slate-100">
-                <div className="flex justify-between mb-1">
-                  <p className="text-sm font-semibold text-slate-800">Kamu menyelesaikan tugas "Resume Jurnal IoT"</p>
-                  <span className="text-xs text-slate-500">2 jam yang lalu</span>
-                </div>
-                <p className="text-xs text-slate-500">Internet of Things</p>
-              </div>
+          {courses.length === 0 ? (
+            <div className="text-center py-8">
+              <BookOpen size={40} className="mx-auto text-slate-200 mb-3" />
+              <p className="text-slate-500 text-sm">Belum ada mata kuliah</p>
             </div>
-
-            <div className="flex gap-4">
-              <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-500 shrink-0">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
-              </div>
-              <div className="flex-1 pb-6 border-b border-slate-100">
-                <div className="flex justify-between mb-1">
-                  <p className="text-sm font-semibold text-slate-800">Kamu mengupdate tugas "CRUD Laravel"</p>
-                  <span className="text-xs text-slate-500">5 jam yang lalu</span>
+          ) : (
+            <div className="space-y-5">
+              {courses.slice(0, 5).map((course, idx) => (
+                <div key={course.id}>
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2 min-w-0">
+                      <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${iconColors[idx % iconColors.length]}`}>{getCourseIcon(course.name)}</div>
+                      <span className="text-sm font-semibold text-slate-800 truncate">{course.name}</span>
+                    </div>
+                    <span className="text-xs font-medium text-slate-500 shrink-0 ml-2">{course.completed_tasks}/{course.total_tasks}</span>
+                  </div>
+                  <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+                    <div className="h-full bg-indigo-600 rounded-full" style={{ width: `${course.progress_percentage}%` }}></div>
+                  </div>
                 </div>
-                <p className="text-xs text-slate-500">Web Programming 2</p>
-              </div>
+              ))}
             </div>
-
-            <div className="flex gap-4">
-              <div className="w-10 h-10 rounded-full bg-amber-50 flex items-center justify-center text-amber-500 shrink-0">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-              </div>
-              <div className="flex-1">
-                <div className="flex justify-between mb-1">
-                  <p className="text-sm font-semibold text-slate-800">Kamu menambahkan tugas baru "ERD Database"</p>
-                  <span className="text-xs text-slate-500">1 hari yang lalu</span>
-                </div>
-                <p className="text-xs text-slate-500">Basis Data</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Prioritas Tugas */}
-        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-          <h2 className="text-lg font-bold text-slate-800 mb-6">Prioritas Tugas</h2>
-          <div className="flex items-center gap-6 mb-6">
-            <div className="relative flex items-center justify-center w-28 h-28 rounded-full border-[8px] border-amber-500 border-t-red-500 border-l-red-500 border-r-red-500">
-              <div className="absolute w-28 h-28 rounded-full border-[8px] border-transparent border-b-emerald-500 border-l-emerald-500 rotate-45"></div>
-              <div className="absolute flex flex-col items-center">
-                <span className="text-xl font-black text-slate-800">24</span>
-                <span className="text-[10px] text-slate-500 mt-0.5">Total</span>
-              </div>
-            </div>
-            <div className="space-y-3 flex-1">
-               <div className="flex justify-between text-xs items-center">
-                  <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-red-500"></span>Tinggi</span>
-                  <span className="text-slate-500">9 tugas (38%)</span>
-                </div>
-                <div className="flex justify-between text-xs items-center">
-                  <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-amber-500"></span>Sedang</span>
-                  <span className="text-slate-500">10 tugas (42%)</span>
-                </div>
-                <div className="flex justify-between text-xs items-center">
-                  <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>Rendah</span>
-                  <span className="text-slate-500">5 tugas (20%)</span>
-                </div>
-            </div>
-          </div>
-          <div className="bg-slate-50 p-3 rounded-xl flex gap-2 text-xs text-slate-500">
-             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-indigo-500 shrink-0"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
-             Fokus pada tugas prioritas tinggi terlebih dahulu!
-          </div>
+          )}
         </div>
       </div>
+
+      {stats?.total === 0 && (
+        <div className="bg-indigo-50 border border-indigo-100 rounded-2xl p-6 text-center">
+          <Plus size={40} className="mx-auto text-indigo-400 mb-3" />
+          <h3 className="text-lg font-bold text-indigo-800 mb-2">Mulai dari sini!</h3>
+          <p className="text-indigo-600 text-sm">Tambahkan mata kuliah dan tugas pertama kamu untuk melihat dashboard yang aktif.</p>
+        </div>
+      )}
     </div>
   );
 };

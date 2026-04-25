@@ -6,6 +6,11 @@ use App\Http\Controllers\Api\TaskController;
 use App\Http\Controllers\Api\CourseController;
 use App\Http\Controllers\Api\DashboardController;
 
+// Handle CORS preflight OPTIONS request untuk semua route API
+Route::options('{any}', function () {
+    return response('', 200);
+})->where('any', '.*');
+
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
@@ -17,8 +22,6 @@ Route::get('/dashboard', [DashboardController::class, 'index']);
 Route::get('/courses', [CourseController::class, 'index']);
 Route::post('/courses', [CourseController::class, 'store']);
 Route::delete('/courses/{id}', [CourseController::class, 'destroy']);
-
-
 
 // Endpoint Tugas
 Route::get('/tasks', [TaskController::class, 'index']);
