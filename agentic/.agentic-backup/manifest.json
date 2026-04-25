@@ -1,0 +1,14 @@
+{
+  "timestamp": "2026-04-25T04:16:33.552Z",
+  "files": {
+    ".cursorrules": {
+      "action": "delete"
+    },
+    ".windsurfrules": {
+      "action": "delete"
+    },
+    ".agent-context": {
+      "action": "delete"
+    }
+  }
+}

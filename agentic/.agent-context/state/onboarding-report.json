@@ -1,0 +1,439 @@
+{
+  "cliVersion": "3.0.26",
+  "generatedAt": "2026-04-25T04:16:33.789Z",
+  "operationMode": "init",
+  "selectedProfile": "balanced",
+  "selectedPreset": null,
+  "projectScope": {
+    "key": "both",
+    "label": "Both (frontend + backend)"
+  },
+  "projectTopology": null,
+  "runtimeDecision": {
+    "mode": "agent-decision-required",
+    "explicitStack": null,
+    "detectedStackEvidence": "php.md",
+    "detectedAdditionalStackEvidence": [
+      "typescript.md"
+    ]
+  },
+  "architectureDecision": {
+    "mode": "agent-decision-required",
+    "explicitBlueprint": null,
+    "detectedBlueprintEvidence": null
+  },
+  "selectedStack": null,
+  "selectedAdditionalStacks": [],
+  "selectedBlueprint": null,
+  "selectedAdditionalBlueprints": [],
+  "ruleLoadingPolicy": {
+    "canonicalSource": ".instructions.md",
+    "stackLoadingMode": "lazy",
+    "loadedOnDemand": true,
+    "primaryStack": null,
+    "additionalStacks": [],
+    "agentDecisionRequired": true
+  },
+  "ciGuardrailsEnabled": true,
+  "setupDurationMs": 7595,
+  "runtimeEnvironment": {
+    "selected": "windows",
+    "selectedLabel": "Windows",
+    "detected": "windows",
+    "detectedLabel": "Windows",
+    "detectionSource": "process.platform"
+  },
+  "tokenOptimization": {
+    "enabled": true,
+    "selectedAgent": "copilot",
+    "preferredShellProxy": "native-fallback",
+    "stateFile": ".agent-context/state/token-optimization.json"
+  },
+  "memoryContinuity": {
+    "enabled": true,
+    "hydrationMode": "progressive-disclosure",
+    "adapters": [
+      "claude-code",
+      "gemini-cli",
+      "vscode-chat"
+    ],
+    "stateFile": ".agent-context/state/memory-continuity.json",
+    "activeSnapshotFile": ".agent-context/state/active-memory.json"
+  },
+  "autoDetection": {
+    "detectedStack": "php.md",
+    "detectedAdditionalStacks": [
+      "typescript.md"
+    ],
+    "detectedBlueprint": null,
+    "detectedAdditionalBlueprints": [],
+    "confidenceLabel": "high",
+    "confidenceScore": 0.95,
+    "confidenceGap": 0.05,
+    "detectionReasoning": "Top signal Php is close to Typescript (confidence gap 0.05).",
+    "rankedCandidates": [
+      {
+        "stackFileName": "php.md",
+        "confidenceScore": 0.95,
+        "evidence": [
+          "backend/task-kuliah: composer.json"
+        ]
+      },
+      {
+        "stackFileName": "typescript.md",
+        "confidenceScore": 0.9,
+        "evidence": [
+          "backend/task-kuliah: package.json",
+          "backend/task-kuliah: Vite config"
+        ]
+      }
+    ],
+    "evidence": [
+      "backend/task-kuliah: composer.json",
+      "multiple stack signals detected"
+    ],
+    "detectionTransparency": {
+      "declaredAt": "2026-04-25T04:16:26.204Z",
+      "declarationType": "existing-project",
+      "declarationShown": true,
+      "detectionSummary": "This folder looks like Php with high confidence based on backend/task-kuliah: composer.json, multiple stack signals detected. Confidence gap: 0.05. Secondary stack signals: Typescript.",
+      "activeRulesSummary": {
+        "canonicalSource": ".instructions.md",
+        "compiledEntrypoints": [
+          ".agent-instructions.md",
+          ".cursorrules",
+          ".windsurfrules",
+          ".clauderc",
+          ".gemini/instructions.md",
+          ".github/copilot-instructions.md"
+        ],
+        "stackLoadingMode": "lazy",
+        "selectedProfile": "balanced",
+        "selectedProfileDisplayName": "Balanced",
+        "blockingSeverities": [
+          "critical",
+          "high"
+        ],
+        "ciGuardrailsEnabled": true
+      },
+      "majorConstraints": [
+        "Preserve existing project markers and avoid forced stack migration.",
+        "Use detected runtime markers as evidence only; do not convert them into stack migration or design direction.",
+        "Explicit stack or blueprint overrides are constraints only when the user provides them."
+      ],
+      "quickConfirmation": {
+        "offered": false,
+        "response": "evidence-only",
+        "source": "existing-project-detection"
+      },
+      "decision": {
+        "mode": "existing-project-evidence-only",
+        "selectedStackFileName": "agent-decision-runtime.md",
+        "selectedBlueprintFileName": "agent-decision-architecture.md",
+        "selectedAdditionalStackFileNames": [],
+        "selectedAdditionalBlueprintFileNames": [],
+        "usedDetectedSetup": false,
+        "selectedProjectScopeKey": "both",
+        "selectedProjectScopeLabel": "Both (frontend + backend)"
+      },
+      "projectContextEvidence": null
+    },
+    "uiScope": {
+      "isUiScopeLikely": true,
+      "signalReasons": [
+        "workspace backend/task-kuliah: ui markers: vite.config.js, app, public",
+        "workspace backend/task-kuliah: ui dependencies: tailwindcss",
+        "workspace backend/task-kuliah/storage: ui markers: app"
+      ],
+      "workspaceUiEntries": [
+        {
+          "relativePath": "backend/task-kuliah",
+          "detectedUiMarkers": [
+            "vite.config.js",
+            "app",
+            "public"
+          ],
+          "detectedUiDependencies": [
+            "tailwindcss"
+          ]
+        },
+        {
+          "relativePath": "backend/task-kuliah/storage",
+          "detectedUiMarkers": [
+            "app"
+          ],
+          "detectedUiDependencies": []
+        }
+      ],
+      "frontendEvidenceMetrics": {
+        "scannedFileCount": 28,
+        "hardcodedColorCount": 392,
+        "propDrillingCandidateCount": 0,
+        "mediaQueryCount": 7,
+        "tailwindBreakpointUsageCount": 0,
+        "arbitraryBreakpointCount": 0,
+        "uniqueMediaWidthCount": 4,
+        "structuredClassAttributeCount": 16,
+        "boundClassExpressionCount": 0,
+        "inlineStyleObjectCount": 0,
+        "inlineStyleBindingCount": 0,
+        "inlineStyleTokenBypassCount": 0
+      },
+      "designEvidenceSummary": {
+        "summaryVersion": "v1",
+        "source": "lightweight-static-scan",
+        "scanRootRelativePaths": [
+          "backend/task-kuliah",
+          "backend/task-kuliah/storage"
+        ],
+        "scannedFileCount": 28,
+        "cssVariables": {
+          "definitionCount": 166,
+          "referenceCount": 100,
+          "sampleNames": [
+            "font-sans",
+            "shiki-dark",
+            "shiki-dark-font-style",
+            "shiki-dark-font-weight",
+            "shiki-dark-text-decoration",
+            "phpunit-breadcrumbs",
+            "phpunit-success-bar",
+            "phpunit-success-high",
+            "phpunit-success-medium",
+            "phpunit-success-low",
+            "phpunit-warning",
+            "phpunit-warning-bar"
+          ],
+          "categoryCounts": {
+            "color": 95,
+            "spacing": 0,
+            "radius": 0,
+            "shadow": 8,
+            "typography": 2,
+            "motion": 0,
+            "other": 61
+          }
+        },
+        "colors": {
+          "hardcodedCount": 392,
+          "kindCounts": {
+            "hex": 345,
+            "rgb": 43,
+            "hsl": 4,
+            "oklch": 0,
+            "other": 0
+          },
+          "sampleValues": [
+            "#ccc",
+            "#2d2d2d",
+            "#999",
+            "#e2777a",
+            "#6196cc",
+            "#f08d49",
+            "#f8c555",
+            "#cc99cd",
+            "#7ec699",
+            "#67cdcc",
+            "hsla(24,20%,50%,.08)",
+            "hsla(24,20%,50%,.1)"
+          ]
+        },
+        "spacing": {
+          "rawValueCount": 254,
+          "sampleValues": [
+            "1em",
+            ".5em",
+            ".1em",
+            ".4em",
+            ".6em",
+            "3.8em",
+            "-3.8em",
+            "3em",
+            "1px",
+            ".8em",
+            "10px",
+            "20px"
+          ]
+        },
+        "radius": {
+          "rawValueCount": 26,
+          "sampleValues": [
+            ".3em",
+            "999px",
+            "3px",
+            "5px",
+            "6px",
+            "4px",
+            "16px"
+          ]
+        },
+        "shadow": {
+          "rawValueCount": 19,
+          "sampleValues": [
+            "0 1px #fff",
+            "inset -5px 0 0 0 #4288CE",
+            "0 3px 0 rgba(0, 0, 0, .05),",
+            "inset 0 0 0 2px rgba(255, 255, 255, 0.1)",
+            "inset 0 0 0 2px rgba(255, 255, 255, 0.3)",
+            "0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1)",
+            "7px 7px 12px -9px #777",
+            "0px 0px 1px rgba(128, 128, 128, .2)",
+            "inset 0 0 0 1px var(--tab-border-color), 0 0 0 5px var(--page-background)",
+            "inset 0 0 0 1px var(--tab-border-color), 0 0 0 4px var(--page-background)",
+            "none",
+            "var(--selected-badge-shadow)"
+          ]
+        },
+        "typography": {
+          "fontFamilyCount": 13,
+          "fontSizeCount": 67,
+          "lineHeightCount": 19,
+          "letterSpacingCount": 1,
+          "fontFamilySamples": [
+            "Consolas,Monaco,'Andale Mono','Ubuntu Mono',monospace",
+            "Inconsolata\", \"Fira Mono\", \"Source Code Pro\", Monaco, Consolas, \"Lucida Console\", monospace",
+            "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif,",
+            "sans-serif",
+            "Source Code Pro\", var(--bs-font-monospace)",
+            "var(--bs-font-sans-serif)",
+            "monospace,monospace",
+            "Arial, Helvetica, sans-serif",
+            "monospace",
+            "Helvetica, Arial, sans-serif",
+            "Lucida Console\", monospace, sans-serif"
+          ],
+          "fontSizeSamples": [
+            "1em",
+            "10px",
+            "14px",
+            "20px",
+            "11px",
+            "12px",
+            "16px",
+            "13px",
+            "18px",
+            "19px",
+            "15px",
+            "2em"
+          ],
+          "lineHeightSamples": [
+            "1.5",
+            "12px",
+            "18px",
+            "10px",
+            "0",
+            "1",
+            "1.4",
+            "1.5em",
+            "33px",
+            "1.3",
+            "1.8"
+          ],
+          "letterSpacingSamples": [
+            "-1px"
+          ]
+        },
+        "motion": {
+          "transitionCount": 6,
+          "animationCount": 9,
+          "durationCount": 7,
+          "durationSamples": [
+            "0.5s",
+            "0.1s",
+            "25s",
+            "05s"
+          ]
+        },
+        "tailwind": {
+          "breakpointUsageCount": 0,
+          "arbitraryBreakpointCount": 0,
+          "utilityFamilyCounts": {
+            "'+i.classes.join(": 1,
+            "line": 2,
+            "tooltip": 3,
+            "popover": 4,
+            "tab": 1,
+            "hidden": 3,
+            "block": 2
+          },
+          "utilityFamilySamples": [
+            "'+i.classes.join(",
+            "line",
+            "tooltip",
+            "popover",
+            "tab",
+            "hidden",
+            "block"
+          ]
+        },
+        "componentInventory": {
+          "componentFileCount": 2,
+          "pageFileCount": 0,
+          "layoutFileCount": 0,
+          "surfaceFileSamples": [
+            "backend/task-kuliah/vendor/symfony/var-dumper/Resources/css/htmlDescriptor.css",
+            "backend/task-kuliah/vendor/symfony/var-dumper/Resources/js/htmlDescriptor.js"
+          ]
+        },
+        "structuredInspection": {
+          "mode": "attribute-aware-static-scan",
+          "classAttributeCount": 16,
+          "boundClassExpressionCount": 0,
+          "inlineStyleObjectCount": 0,
+          "inlineStyleBindingCount": 0,
+          "classAttributeSamples": [
+            "'+i.classes.join(",
+            "line-numbers-rows",
+            "line-numbers-sizer",
+            "tooltip",
+            "tooltip-arrow",
+            "tooltip-inner",
+            "popover",
+            "popover-arrow",
+            "popover-header",
+            "popover-body",
+            "tab-navigation",
+            "hidden"
+          ],
+          "inlineStyleSamples": [],
+          "utilityFamilyCounts": {
+            "'+i.classes.join(": 1,
+            "line": 2,
+            "tooltip": 3,
+            "popover": 4,
+            "tab": 1,
+            "hidden": 3,
+            "block": 2
+          },
+          "utilityFamilySamples": [
+            "'+i.classes.join(",
+            "line",
+            "tooltip",
+            "popover",
+            "tab",
+            "hidden",
+            "block"
+          ],
+          "inlineTokenBypassSignals": {
+            "hardcodedColorCount": 0,
+            "rawSpacingCount": 0,
+            "rawRadiusCount": 0,
+            "rawShadowCount": 0,
+            "cssVariableReferenceCount": 0
+          }
+        },
+        "tokenBypassSignals": {
+          "hardcodedColorCount": 392,
+          "rawSpacingCount": 254,
+          "rawRadiusCount": 26,
+          "rawShadowCount": 19,
+          "inlineHardcodedColorCount": 0,
+          "inlineRawSpacingCount": 0,
+          "inlineRawRadiusCount": 0,
+          "inlineRawShadowCount": 0,
+          "inlineCssVariableReferenceCount": 0
+        }
+      }
+    }
+  }
+}
