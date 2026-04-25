@@ -58,6 +58,12 @@ const Sidebar = () => {
     } else if (location.pathname === "/pengaturan") {
       text = "Atur preferensi aplikasi sesuai kebutuhanmu untuk pengalaman terbaik.";
       icon = <Settings size={32} className="text-indigo-400 mb-2 opacity-50" />;
+    } else if (location.pathname === "/prioritas") {
+      text = "Fokus pada tugas prioritas terlebih dahulu untuk hasil lebih maksimal!";
+      icon = <Flag size={32} className="text-indigo-400 mb-2 opacity-50" />;
+    } else if (location.pathname === "/statistik") {
+      text = "Pantau produktivitas dan perkembangan tugasmu di sini.";
+      icon = <BarChart3 size={32} className="text-indigo-400 mb-2 opacity-50" />;
     }
     
     return (

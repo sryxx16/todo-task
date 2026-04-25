@@ -5,10 +5,10 @@ import Matkul from './pages/Matkul';
 import Tugas from './pages/Tugas';
 import Kalender from './pages/Kalender';
 import Pengaturan from './pages/Pengaturan';
+import Prioritas from './pages/Prioritas';
+import Statistik from './pages/Statistik';
 
-// Placeholder halaman lain
-const Prioritas = () => <div className="space-y-6 animate-in fade-in duration-500"><h1 className="text-3xl font-bold text-slate-800">Prioritas</h1><p className="text-slate-500 mt-1">Halaman ini masih dalam pengembangan (Next Step!)</p></div>;
-const Statistik = () => <div className="space-y-6 animate-in fade-in duration-500"><h1 className="text-3xl font-bold text-slate-800">Statistik</h1><p className="text-slate-500 mt-1">Halaman ini masih dalam pengembangan (Next Step!)</p></div>;
+
 
 function App() {
   return (
