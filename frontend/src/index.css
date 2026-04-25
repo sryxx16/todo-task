@@ -1,0 +1,56 @@
+/* Import font modern dari Google Fonts (Plus Jakarta Sans) */
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap");
+
+/* Import Tailwind CSS V4 */
+@import "tailwindcss";
+
+/* Kustomisasi Base Theme Tailwind V4 */
+@theme {
+  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+
+  /* Lo bisa nambahin custom warna spesifik dari desain lo di sini kalau perlu */
+  --color-primary: #3b82f6;
+  --color-primary-hover: #2563eb;
+}
+
+/* Styling Dasar Halaman */
+@layer base {
+  html,
+  body {
+    @apply antialiased text-slate-800 bg-slate-50;
+    scroll-behavior: smooth;
+  }
+
+  /* Bikin scrollbar-nya lebih elegan (opsional) */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-slate-300 rounded-full;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-slate-400;
+  }
+}
+
+/* Animasi tambahan buat smooth loading (fade-in) */
+@layer utilities {
+  .animate-in {
+    animation: fadeIn 0.5s ease-out forwards;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
