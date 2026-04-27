@@ -1,10 +1,13 @@
 import { useEffect, useState } from 'react';
 import { taskApi, courseApi, type Task, type Course } from '../services/api';
 import { ClipboardList, Clock, RefreshCw, CheckCircle2, Calendar as CalendarIcon, CheckCircle, Target, ArrowUp, AlertCircle } from 'lucide-react';
+import { useTheme } from '../contexts/ThemeContext';
 
 const formatDate = (d: string) => new Date(d).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
 
 const Statistik = () => {
+  const { theme } = useTheme();
+  const dark = theme === 'dark';
   const [tasks, setTasks] = useState<Task[]>([]);
   const [courses, setCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(true);
@@ -36,7 +39,7 @@ const Statistik = () => {
 
   const LoadingSkeletons = () => (
     <div className="space-y-4">
-      {[1,2,3].map(i => <div key={i} className="h-24 bg-slate-100 animate-pulse rounded-2xl"></div>)}
+      {[1,2,3].map(i => <div key={i} className={`h-24 animate-pulse rounded-2xl ${dark ? 'bg-slate-700' : 'bg-slate-100'}`}></div>)}
     </div>
   );
 
@@ -45,17 +48,17 @@ const Statistik = () => {
       {/* Header */}
       <div className="flex justify-between items-start mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-slate-800">Statistik</h1>
-          <p className="text-slate-500 mt-1">Lihat ringkasan dan perkembangan tugas kuliahmu.</p>
+          <h1 className={`text-3xl font-bold ${dark ? 'text-slate-100' : 'text-slate-800'}`}>Statistik</h1>
+          <p className={`mt-1 ${dark ? 'text-slate-400' : 'text-slate-500'}`}>Lihat ringkasan dan perkembangan tugas kuliahmu.</p>
         </div>
         <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2 text-slate-500 bg-white px-4 py-2 rounded-lg shadow-sm border border-slate-100">
+          <div className={`flex items-center gap-2 px-4 py-2 rounded-lg shadow-sm border ${dark ? 'bg-slate-800 border-slate-700 text-slate-300' : 'bg-white border-slate-100 text-slate-500'}`}>
             <CalendarIcon size={18} />
             <span className="text-sm font-medium">{today}</span>
           </div>
-          <div className="flex items-center gap-3 bg-white px-3 py-1.5 rounded-lg shadow-sm border border-slate-100">
+          <div className={`flex items-center gap-3 px-3 py-1.5 rounded-lg shadow-sm border ${dark ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-100'}`}>
             <img src="https://ui-avatars.com/api/?name=Surya&background=6366f1&color=fff" alt="Surya" className="w-8 h-8 rounded-full" />
-            <span className="font-medium text-slate-700">Surya</span>
+            <span className={`font-medium ${dark ? 'text-slate-200' : 'text-slate-700'}`}>Surya</span>
           </div>
         </div>
       </div>
@@ -71,13 +74,13 @@ const Statistik = () => {
           { label:'Selesai', value: selesai, sub:`${total?Math.round(selesai/total*100):0}% dari total`, icon:<CheckCircle2 size={22}/>, color:'bg-emerald-50 text-emerald-500' },
           { label:'Total Mata Kuliah', value: courses.length, sub:'Matkul aktif', icon:<CalendarIcon size={22}/>, color:'bg-purple-50 text-purple-500' },
         ].map(c => (
-          <div key={c.label} className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
+          <div key={c.label} className={`p-5 rounded-2xl shadow-sm border ${dark ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-100'}`}>
             <div className="flex items-center gap-3 mb-3">
               <div className={`p-2.5 ${c.color} rounded-xl shrink-0`}>{c.icon}</div>
-              <p className="text-xs font-semibold text-slate-500">{c.label}</p>
+              <p className={`text-xs font-semibold ${dark ? 'text-slate-400' : 'text-slate-500'}`}>{c.label}</p>
             </div>
-            <h3 className="text-3xl font-bold text-slate-800 mb-1">{loading ? '—' : c.value}</h3>
-            <p className="text-xs text-slate-500">{c.sub}</p>
+            <h3 className={`text-3xl font-bold mb-1 ${dark ? 'text-slate-100' : 'text-slate-800'}`}>{loading ? '—' : c.value}</h3>
+            <p className={`text-xs ${dark ? 'text-slate-400' : 'text-slate-500'}`}>{c.sub}</p>
           </div>
         ))}
       </div>
@@ -85,8 +88,8 @@ const Statistik = () => {
       {/* Charts Row */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Distribusi Status */}
-        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col items-center justify-center">
-          <h2 className="text-sm font-bold text-slate-800 mb-6 w-full">Distribusi Status Tugas</h2>
+        <div className={`p-6 rounded-2xl shadow-sm border flex flex-col items-center justify-center ${dark ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-100'}`}>
+          <h2 className={`text-sm font-bold mb-6 w-full ${dark ? 'text-slate-100' : 'text-slate-800'}`}>Distribusi Status Tugas</h2>
           {loading ? <LoadingSkeletons /> : (
             <>
               <div className="relative flex items-center justify-center w-36 h-36 mb-6">
@@ -102,14 +105,14 @@ const Statistik = () => {
                       <circle cx="72" cy="72" r={r} fill="none" stroke="#f59e0b" strokeWidth="20" strokeDasharray={`${s3} ${circ}`} strokeDashoffset={`-${s1+s2}`} transform="rotate(-90 72 72)"/>
                     </>);
                   })() : <circle cx="72" cy="72" r="58" fill="none" stroke="#e2e8f0" strokeWidth="20"/>}
-                  <text x="72" y="77" textAnchor="middle" fill="#1e293b" fontSize="22" fontWeight="800">{total}</text>
+                  <text x="72" y="77" textAnchor="middle" fill={dark ? '#f1f5f9' : '#1e293b'} fontSize="22" fontWeight="800">{total}</text>
                 </svg>
               </div>
               <div className="w-full space-y-2 text-sm">
                 {[{color:'bg-emerald-500',label:'Selesai',val:selesai},{color:'bg-blue-500',label:'Proses',val:proses},{color:'bg-amber-500',label:'Belum Dikerjakan',val:belum}].map(item => (
                   <div key={item.label} className="flex justify-between items-center">
                     <span className="flex items-center gap-2"><span className={`w-3 h-3 rounded-full ${item.color}`}></span>{item.label}</span>
-                    <span className="text-slate-500 text-xs">{item.val} tugas ({total?Math.round(item.val/total*100):0}%)</span>
+                    <span className={`text-xs ${dark ? 'text-slate-400' : 'text-slate-500'}`}>{item.val} tugas ({total?Math.round(item.val/total*100):0}%)</span>
                   </div>
                 ))}
               </div>
@@ -118,8 +121,8 @@ const Statistik = () => {
         </div>
 
         {/* Distribusi Prioritas */}
-        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col items-center justify-center">
-          <h2 className="text-sm font-bold text-slate-800 mb-6 w-full">Tugas Berdasarkan Prioritas</h2>
+        <div className={`p-6 rounded-2xl shadow-sm border flex flex-col items-center justify-center ${dark ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-100'}`}>
+          <h2 className={`text-sm font-bold mb-6 w-full ${dark ? 'text-slate-100' : 'text-slate-800'}`}>Tugas Berdasarkan Prioritas</h2>
           {loading ? <LoadingSkeletons /> : (
             <>
               <div className="relative flex items-center justify-center w-36 h-36 mb-6">
@@ -135,14 +138,14 @@ const Statistik = () => {
                       <circle cx="72" cy="72" r={r} fill="none" stroke="#10b981" strokeWidth="20" strokeDasharray={`${s3} ${circ}`} strokeDashoffset={`-${s1+s2}`} transform="rotate(-90 72 72)"/>
                     </>);
                   })() : <circle cx="72" cy="72" r="58" fill="none" stroke="#e2e8f0" strokeWidth="20"/>}
-                  <text x="72" y="77" textAnchor="middle" fill="#1e293b" fontSize="22" fontWeight="800">{total}</text>
+                  <text x="72" y="77" textAnchor="middle" fill={dark ? '#f1f5f9' : '#1e293b'} fontSize="22" fontWeight="800">{total}</text>
                 </svg>
               </div>
               <div className="w-full space-y-2 text-sm">
                 {[{color:'bg-red-500',label:'Tinggi',val:tinggi},{color:'bg-amber-500',label:'Sedang',val:sedang},{color:'bg-emerald-500',label:'Rendah',val:rendah}].map(item => (
                   <div key={item.label} className="flex justify-between items-center">
                     <span className="flex items-center gap-2"><span className={`w-3 h-3 rounded-full ${item.color}`}></span>{item.label}</span>
-                    <span className="text-slate-500 text-xs">{item.val} tugas ({total?Math.round(item.val/total*100):0}%)</span>
+                    <span className={`text-xs ${dark ? 'text-slate-400' : 'text-slate-500'}`}>{item.val} tugas ({total?Math.round(item.val/total*100):0}%)</span>
                   </div>
                 ))}
               </div>
@@ -151,8 +154,8 @@ const Statistik = () => {
         </div>
 
         {/* Rata-rata Progress */}
-        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col items-center justify-center">
-          <h2 className="text-sm font-bold text-slate-800 w-full mb-6">Rata-rata Progress Tugas</h2>
+        <div className={`p-6 rounded-2xl shadow-sm border flex flex-col items-center justify-center ${dark ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-100'}`}>
+          <h2 className={`text-sm font-bold w-full mb-6 ${dark ? 'text-slate-100' : 'text-slate-800'}`}>Rata-rata Progress Tugas</h2>
           {loading ? <LoadingSkeletons /> : (
             <>
               <div className="relative w-48 h-28 mb-4 overflow-hidden">
@@ -164,8 +167,8 @@ const Statistik = () => {
                   )}
                 </svg>
                 <div className="absolute inset-0 flex flex-col items-center justify-end pb-4">
-                  <span className="text-4xl font-black text-slate-800">{overallProgress}%</span>
-                  <span className="text-xs text-slate-500 font-medium">Rata-rata Progress</span>
+                  <span className={`text-4xl font-black ${dark ? 'text-slate-100' : 'text-slate-800'}`}>{overallProgress}%</span>
+                  <span className={`text-xs font-medium ${dark ? 'text-slate-400' : 'text-slate-500'}`}>Rata-rata Progress</span>
                 </div>
               </div>
               <div className="flex items-center gap-1.5 px-3 py-1 bg-indigo-50 text-indigo-600 rounded-full text-xs font-semibold">
@@ -177,14 +180,14 @@ const Statistik = () => {
       </div>
 
       {/* Tugas per Matkul */}
-      <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-        <h2 className="text-sm font-bold text-slate-800 mb-5">Tugas per Mata Kuliah</h2>
-        {loading ? <div className="h-32 bg-slate-100 animate-pulse rounded-xl"></div> : courses.length === 0 ? (
-          <p className="text-slate-400 text-sm text-center py-6">Belum ada mata kuliah</p>
+      <div className={`p-6 rounded-2xl shadow-sm border ${dark ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-100'}`}>
+        <h2 className={`text-sm font-bold mb-5 ${dark ? 'text-slate-100' : 'text-slate-800'}`}>Tugas per Mata Kuliah</h2>
+        {loading ? <div className={`h-32 animate-pulse rounded-xl ${dark ? 'bg-slate-700' : 'bg-slate-100'}`}></div> : courses.length === 0 ? (
+          <p className={`text-sm text-center py-6 ${dark ? 'text-slate-500' : 'text-slate-400'}`}>Belum ada mata kuliah</p>
         ) : (
           <table className="w-full text-left text-sm">
             <thead>
-              <tr className="border-b border-slate-100 text-slate-500">
+              <tr className={`border-b ${dark ? 'border-slate-700 text-slate-400' : 'border-slate-100 text-slate-500'}`}>
                 <th className="pb-3 font-medium">Mata Kuliah</th>
                 <th className="pb-3 font-medium text-center">Total</th>
                 <th className="pb-3 font-medium text-center">Selesai</th>
@@ -194,15 +197,15 @@ const Statistik = () => {
             </thead>
             <tbody>
               {courses.map(c => (
-                <tr key={c.id} className="border-b border-slate-50 hover:bg-slate-50 transition-colors">
-                  <td className="py-3 font-medium text-slate-700">{c.name}</td>
-                  <td className="py-3 text-center text-slate-600">{c.total_tasks}</td>
+                <tr key={c.id} className={`border-b transition-colors ${dark ? 'border-slate-700 hover:bg-slate-700/50' : 'border-slate-50 hover:bg-slate-50'}`}>
+                  <td className={`py-3 font-medium ${dark ? 'text-slate-200' : 'text-slate-700'}`}>{c.name}</td>
+                  <td className={`py-3 text-center ${dark ? 'text-slate-300' : 'text-slate-600'}`}>{c.total_tasks}</td>
                   <td className="py-3 text-center text-emerald-600 font-semibold">{c.completed_tasks}</td>
                   <td className="py-3 text-center text-blue-600 font-semibold">{c.in_progress_tasks}</td>
                   <td className="py-3">
                     <div className="flex items-center gap-2 justify-end">
-                      <div className="w-24 h-2 bg-slate-100 rounded-full overflow-hidden"><div className="h-full bg-indigo-600 rounded-full" style={{width:`${c.progress_percentage}%`}}></div></div>
-                      <span className="text-xs text-slate-500 w-8">{c.progress_percentage}%</span>
+                      <div className={`w-24 h-2 rounded-full overflow-hidden ${dark ? 'bg-slate-700' : 'bg-slate-100'}`}><div className="h-full bg-indigo-600 rounded-full" style={{width:`${c.progress_percentage}%`}}></div></div>
+                      <span className={`text-xs w-8 ${dark ? 'text-slate-400' : 'text-slate-500'}`}>{c.progress_percentage}%</span>
                     </div>
                   </td>
                 </tr>
@@ -214,8 +217,8 @@ const Statistik = () => {
 
       {/* Insight */}
       {!loading && (
-        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-          <h2 className="text-lg font-bold text-slate-800 mb-4">Insight</h2>
+        <div className={`p-6 rounded-2xl shadow-sm border ${dark ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-100'}`}>
+          <h2 className={`text-lg font-bold mb-4 ${dark ? 'text-slate-100' : 'text-slate-800'}`}>Insight</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="p-4 bg-emerald-50 rounded-xl border border-emerald-100 flex items-start gap-3">
               <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center text-emerald-500 shrink-0 shadow-sm"><CheckCircle size={16}/></div>

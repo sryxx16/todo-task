@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, BookOpen, ListTodo, Calendar, Flag, User, GraduationCap, Plus, CheckCircle2 } from 'lucide-react';
 import { courseApi, taskApi, type Course } from '../services/api';
+import { useTheme } from '../contexts/ThemeContext';
 
 interface QuickAddModalProps {
   isOpen: boolean;
@@ -10,6 +11,8 @@ interface QuickAddModalProps {
 }
 
 const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose, initialTab = 'task', onSuccess }) => {
+  const { theme } = useTheme();
+  const dark = theme === 'dark';
   const [activeTab, setActiveTab] = useState<'task' | 'course'>(initialTab);
   const [loading, setLoading] = useState(false);
   const [courses, setCourses] = useState<Course[]>([]);
@@ -92,9 +95,9 @@ const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose, initialT
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300">
-      <div className="bg-white w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300">
+      <div className={`w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300 ${dark ? 'bg-slate-800' : 'bg-white'}`}>
         {/* Header with Tabs */}
-        <div className="relative border-b border-slate-100">
+        <div className={`relative border-b ${dark ? 'border-slate-700' : 'border-slate-100'}`}>
           <button 
             onClick={onClose}
             className="absolute right-4 top-4 p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-full transition-colors z-10"
