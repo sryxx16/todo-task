@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { taskApi, courseApi, type Task, type Course } from '../services/api';
+import { taskApi, type Task } from '../services/api';
 import { Flag, Eye, Edit, Trash2, ChevronDown, ChevronUp, Calendar as CalendarIcon, Clock, CheckCircle2, Target, AlertCircle } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 
@@ -62,7 +62,6 @@ const Prioritas = () => {
   const { theme } = useTheme();
   const dark = theme === 'dark';
   const [tasks, setTasks] = useState<Task[]>([]);
-  const [courses, setCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [expanded, setExpanded] = useState({ tinggi: true, sedang: true, rendah: true });
@@ -71,9 +70,8 @@ const Prioritas = () => {
 
   const fetchAll = async () => {
     try {
-      const [tRes, cRes] = await Promise.all([taskApi.getAll(), courseApi.getAll()]);
+      const tRes = await taskApi.getAll();
       setTasks(tRes.data.data);
-      setCourses(cRes.data.data);
     } catch { setError('Gagal memuat data. Pastikan Docker backend berjalan.'); }
     finally { setLoading(false); }
   };

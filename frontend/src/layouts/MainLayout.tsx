@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import QuickAddModal from "../components/QuickAddModal";
 import { useTheme } from "../contexts/ThemeContext";
@@ -13,7 +13,6 @@ const MainLayout = () => {
   
   // State untuk refresh halaman setelah tambah data
   const [refreshKey, setRefreshKey] = useState(0);
-  const navigate = useNavigate();
 
   const handleQuickAdd = (tab: 'task' | 'course') => {
     setModalState({ isOpen: true, tab });

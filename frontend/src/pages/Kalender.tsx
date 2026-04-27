@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { taskApi, courseApi, type Task, type Course } from '../services/api';
+import { taskApi, type Task } from '../services/api';
 import { CalendarIcon, Plus, ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react';
 import QuickAddModal from '../components/QuickAddModal';
 import { useTheme } from '../contexts/ThemeContext';
@@ -11,8 +11,6 @@ const formatDate = (d: string) => new Date(d).toLocaleDateString('id-ID', { day:
 const MONTHS = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
 const DAYS_SHORT = ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'];
 
-interface CalendarEvent { task: Task; date: number }
-
 const priorityColor = (p: Task['priority'], isDark = false) =>
   p === 'Tinggi' ? { dot: 'bg-red-500', bg: isDark ? 'bg-red-900/30 border-red-800 text-red-400' : 'bg-red-50 border-red-100 text-red-700' } :
     p === 'Sedang' ? { dot: 'bg-amber-500', bg: isDark ? 'bg-amber-900/30 border-amber-800 text-amber-400' : 'bg-amber-50 border-amber-100 text-amber-700' } :
@@ -22,7 +20,6 @@ const Kalender = () => {
   const { theme } = useTheme();
   const dark = theme === 'dark';
   const [tasks, setTasks] = useState<Task[]>([]);
-  const [courses, setCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentDate, setCurrentDate] = useState(new Date());
   const [view, setView] = useState<'Bulan' | 'Minggu' | 'Hari'>('Bulan');
@@ -33,9 +30,8 @@ const Kalender = () => {
   // Pisahin fetchAll biar bisa dipanggil ulang pas modal ditutup
   const fetchAll = async () => {
     try {
-      const [tRes, cRes] = await Promise.all([taskApi.getAll(), courseApi.getAll()]);
+      const tRes = await taskApi.getAll();
       setTasks(tRes.data.data);
-      setCourses(cRes.data.data);
     } catch (e) {
       console.error(e);
     } finally {

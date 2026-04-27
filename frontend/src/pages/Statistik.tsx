@@ -3,8 +3,6 @@ import { taskApi, courseApi, type Task, type Course } from '../services/api';
 import { ClipboardList, Clock, RefreshCw, CheckCircle2, Calendar as CalendarIcon, CheckCircle, Target, ArrowUp, AlertCircle } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 
-const formatDate = (d: string) => new Date(d).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
-
 const Statistik = () => {
   const { theme } = useTheme();
   const dark = theme === 'dark';
