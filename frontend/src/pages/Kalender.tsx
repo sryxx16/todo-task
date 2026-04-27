@@ -13,10 +13,10 @@ const DAYS_SHORT = ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'];
 
 interface CalendarEvent { task: Task; date: number }
 
-const priorityColor = (p: Task['priority']) =>
-  p === 'Tinggi' ? { dot: 'bg-red-500', bg: 'bg-red-50 border-red-100 text-red-700' } :
-    p === 'Sedang' ? { dot: 'bg-amber-500', bg: 'bg-amber-50 border-amber-100 text-amber-700' } :
-      { dot: 'bg-emerald-500', bg: 'bg-emerald-50 border-emerald-100 text-emerald-700' };
+const priorityColor = (p: Task['priority'], isDark = false) =>
+  p === 'Tinggi' ? { dot: 'bg-red-500', bg: isDark ? 'bg-red-900/30 border-red-800 text-red-400' : 'bg-red-50 border-red-100 text-red-700' } :
+    p === 'Sedang' ? { dot: 'bg-amber-500', bg: isDark ? 'bg-amber-900/30 border-amber-800 text-amber-400' : 'bg-amber-50 border-amber-100 text-amber-700' } :
+      { dot: 'bg-emerald-500', bg: isDark ? 'bg-emerald-900/30 border-emerald-800 text-emerald-400' : 'bg-emerald-50 border-emerald-100 text-emerald-700' };
 
 const Kalender = () => {
   const { theme } = useTheme();
@@ -153,7 +153,7 @@ const Kalender = () => {
                     </div>
                     <div className="space-y-0.5">
                       {dayTasks.slice(0, 2).map(t => {
-                        const col = priorityColor(t.priority);
+                        const col = priorityColor(t.priority, dark);
                         return (
                           <div key={t.id} className={`text-[10px] p-1 rounded border ${col.bg} truncate`}>
                             <span className={`inline-block w-1.5 h-1.5 rounded-full ${col.dot} mr-1`}></span>
@@ -197,7 +197,7 @@ const Kalender = () => {
                         const days = getDaysLeft(t.deadline);
                         return (
                           <div key={t.id} className="flex gap-3 items-center">
-                            <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${days <= 2 ? 'bg-red-50 text-red-500' : days <= 7 ? 'bg-amber-50 text-amber-500' : 'bg-emerald-50 text-emerald-500'}`}>
+                            <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${days <= 2 ? (dark ? 'bg-red-900/30 text-red-400' : 'bg-red-50 text-red-500') : days <= 7 ? (dark ? 'bg-amber-900/30 text-amber-400' : 'bg-amber-50 text-amber-500') : (dark ? 'bg-emerald-900/30 text-emerald-400' : 'bg-emerald-50 text-emerald-500')}`}>
                               <CalendarIcon size={16} />
                             </div>
                             <div className="flex-1 min-w-0">

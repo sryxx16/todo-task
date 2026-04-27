@@ -215,14 +215,14 @@ const Prioritas = () => {
                       <circle cx="48" cy="48" r={r} fill="none" stroke="#f59e0b" strokeWidth="18" strokeDasharray={`${t2} ${circ}`} strokeDashoffset={`-${t1}`} transform="rotate(-90 48 48)" />
                       <circle cx="48" cy="48" r={r} fill="none" stroke="#10b981" strokeWidth="18" strokeDasharray={`${t3} ${circ}`} strokeDashoffset={`-${t1+t2}`} transform="rotate(-90 48 48)" />
                     </>);
-                  })() : <circle cx="48" cy="48" r="38" fill="none" stroke="#e2e8f0" strokeWidth="18" />}
-                  <text x="48" y="53" textAnchor="middle" className="text-lg font-black" fill="#1e293b" fontSize="16" fontWeight="800">{total}</text>
+                  })() : <circle cx="48" cy="48" r="38" fill="none" stroke={dark ? '#334155' : '#e2e8f0'} strokeWidth="18" />}
+                  <text x="48" y="53" textAnchor="middle" className="text-lg font-black" fill={dark ? '#f1f5f9' : '#1e293b'} fontSize="16" fontWeight="800">{total}</text>
                 </svg>
               </div>
               <div className="space-y-2.5 flex-1 text-xs">
-                <div className="flex justify-between items-center"><span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-red-500"></span>Tinggi</span><span className="text-slate-500">{tasks.filter(t=>t.priority==='Tinggi').length} ({total?Math.round(tasks.filter(t=>t.priority==='Tinggi').length/total*100):0}%)</span></div>
-                <div className="flex justify-between items-center"><span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-amber-500"></span>Sedang</span><span className="text-slate-500">{tasks.filter(t=>t.priority==='Sedang').length} ({total?Math.round(tasks.filter(t=>t.priority==='Sedang').length/total*100):0}%)</span></div>
-                <div className="flex justify-between items-center"><span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>Rendah</span><span className="text-slate-500">{tasks.filter(t=>t.priority==='Rendah').length} ({total?Math.round(tasks.filter(t=>t.priority==='Rendah').length/total*100):0}%)</span></div>
+                <div className="flex justify-between items-center"><span className={`flex items-center gap-1.5 ${dark ? 'text-slate-300' : ''}`}><span className="w-2.5 h-2.5 rounded-full bg-red-500"></span>Tinggi</span><span className={dark ? 'text-slate-400' : 'text-slate-500'}>{tasks.filter(t=>t.priority==='Tinggi').length} ({total?Math.round(tasks.filter(t=>t.priority==='Tinggi').length/total*100):0}%)</span></div>
+                <div className="flex justify-between items-center"><span className={`flex items-center gap-1.5 ${dark ? 'text-slate-300' : ''}`}><span className="w-2.5 h-2.5 rounded-full bg-amber-500"></span>Sedang</span><span className={dark ? 'text-slate-400' : 'text-slate-500'}>{tasks.filter(t=>t.priority==='Sedang').length} ({total?Math.round(tasks.filter(t=>t.priority==='Sedang').length/total*100):0}%)</span></div>
+                <div className="flex justify-between items-center"><span className={`flex items-center gap-1.5 ${dark ? 'text-slate-300' : ''}`}><span className="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>Rendah</span><span className={dark ? 'text-slate-400' : 'text-slate-500'}>{tasks.filter(t=>t.priority==='Rendah').length} ({total?Math.round(tasks.filter(t=>t.priority==='Rendah').length/total*100):0}%)</span></div>
               </div>
             </div>
           </div>
@@ -232,14 +232,14 @@ const Prioritas = () => {
             <h3 className={`text-sm font-bold mb-4 ${dark ? 'text-slate-100' : 'text-slate-800'}`}>Tips Prioritas</h3>
             <div className="space-y-3">
               {[
-                { icon: <Flag size={14}/>, color: 'bg-red-50 text-red-500', text: 'Kerjakan tugas prioritas tinggi terlebih dahulu' },
-                { icon: <Clock size={14}/>, color: 'bg-amber-50 text-amber-500', text: 'Pastikan tugas dengan deadline dekat tidak terlewat' },
-                { icon: <CheckCircle2 size={14}/>, color: 'bg-emerald-50 text-emerald-500', text: 'Selesaikan tugas sedang sebelum menambah tugas baru' },
-                { icon: <Target size={14}/>, color: 'bg-indigo-50 text-indigo-500', text: 'Prioritas bisa diubah sesuai dengan kebutuhanmu' },
+                { icon: <Flag size={14}/>, color: dark ? 'bg-red-900/30 text-red-400' : 'bg-red-50 text-red-500', text: 'Kerjakan tugas prioritas tinggi terlebih dahulu' },
+                { icon: <Clock size={14}/>, color: dark ? 'bg-amber-900/30 text-amber-400' : 'bg-amber-50 text-amber-500', text: 'Pastikan tugas dengan deadline dekat tidak terlewat' },
+                { icon: <CheckCircle2 size={14}/>, color: dark ? 'bg-emerald-900/30 text-emerald-400' : 'bg-emerald-50 text-emerald-500', text: 'Selesaikan tugas sedang sebelum menambah tugas baru' },
+                { icon: <Target size={14}/>, color: dark ? 'bg-indigo-900/30 text-indigo-400' : 'bg-indigo-50 text-indigo-500', text: 'Prioritas bisa diubah sesuai dengan kebutuhanmu' },
               ].map((tip, i) => (
                 <div key={i} className="flex gap-3">
                   <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${tip.color}`}>{tip.icon}</div>
-                  <p className="text-xs text-slate-600 leading-relaxed mt-1">{tip.text}</p>
+                  <p className={`text-xs leading-relaxed mt-1 ${dark ? 'text-slate-400' : 'text-slate-600'}`}>{tip.text}</p>
                 </div>
               ))}
             </div>
@@ -253,7 +253,7 @@ const Prioritas = () => {
                 const days = getDaysLeft(t.deadline);
                 return (
                   <div key={t.id} className="flex gap-3 items-center">
-                    <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${days<=2?'bg-red-50 text-red-500':days<=7?'bg-amber-50 text-amber-500':'bg-emerald-50 text-emerald-500'}`}><CalendarIcon size={16}/></div>
+                    <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${days<=2?(dark?'bg-red-900/30 text-red-400':'bg-red-50 text-red-500'):days<=7?(dark?'bg-amber-900/30 text-amber-400':'bg-amber-50 text-amber-500'):(dark?'bg-emerald-900/30 text-emerald-400':'bg-emerald-50 text-emerald-500')}`}><CalendarIcon size={16}/></div>
                     <div className="flex-1 min-w-0">
                       <h4 className={`font-bold text-xs truncate ${dark ? 'text-slate-100' : 'text-slate-800'}`}>{t.title}</h4>
                       <p className={`text-[11px] truncate ${dark ? 'text-slate-400' : 'text-slate-500'}`}>{t.course?.name}</p>

@@ -261,18 +261,18 @@ const Tugas = () => {
       {showAddModal && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-[999] p-4 animate-in fade-in duration-300">
           <div className={`rounded-3xl shadow-2xl w-full max-w-md overflow-hidden animate-in zoom-in-95 duration-300 ${dark ? 'bg-slate-800' : 'bg-white'}`}>
-            <div className="flex justify-between items-center p-8 border-b border-slate-100 bg-slate-50/50">
+            <div className={`flex justify-between items-center p-8 border-b ${dark ? 'border-slate-700 bg-slate-800' : 'border-slate-100 bg-slate-50/50'}`}>
               <div>
-                <h2 className="text-2xl font-bold text-slate-800">Tambah Tugas Baru</h2>
-                <p className="text-sm text-slate-500 mt-1">Lengkapi data untuk menambahkan tugas baru.</p>
+                <h2 className={`text-2xl font-bold ${dark ? 'text-slate-100' : 'text-slate-800'}`}>Tambah Tugas Baru</h2>
+                <p className={`text-sm mt-1 ${dark ? 'text-slate-400' : 'text-slate-500'}`}>Lengkapi data untuk menambahkan tugas baru.</p>
               </div>
-              <button onClick={() => setShowAddModal(false)} className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-xl transition-colors">
+              <button onClick={() => setShowAddModal(false)} className={`p-2 rounded-xl transition-colors ${dark ? 'text-slate-400 hover:text-slate-200 hover:bg-slate-700' : 'text-slate-400 hover:text-slate-600 hover:bg-slate-100'}`}>
                 <X size={24} />
               </button>
             </div>
             <form onSubmit={handleAdd} className="p-8 space-y-6">
               <div className="space-y-1.5">
-                <label className="text-sm font-bold text-slate-700 flex items-center gap-2">
+                <label className={`text-sm font-bold flex items-center gap-2 ${dark ? 'text-slate-300' : 'text-slate-700'}`}>
                   <BookOpen size={16} className="text-indigo-500" />
                   Mata Kuliah <span className="text-red-500">*</span>
                 </label>
@@ -280,14 +280,14 @@ const Tugas = () => {
                   required
                   value={form.course_id}
                   onChange={e => setForm({ ...form, course_id: Number(e.target.value) })}
-                  className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all text-slate-700"
+                  className={`w-full px-4 py-3 border rounded-2xl focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all ${dark ? 'bg-slate-700 border-slate-600 text-slate-200' : 'bg-slate-50 border-slate-200 text-slate-700'}`}
                 >
                   <option value={0} disabled>Pilih mata kuliah...</option>
                   {courses.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                 </select>
               </div>
               <div className="space-y-1.5">
-                <label className="text-sm font-bold text-slate-700 flex items-center gap-2">
+                <label className={`text-sm font-bold flex items-center gap-2 ${dark ? 'text-slate-300' : 'text-slate-700'}`}>
                   <ListTodo size={16} className="text-indigo-500" />
                   Judul Tugas <span className="text-red-500">*</span>
                 </label>
@@ -297,12 +297,12 @@ const Tugas = () => {
                   value={form.title}
                   onChange={e => setForm({ ...form, title: e.target.value })}
                   placeholder="Contoh: Tugas CRUD Laravel"
-                  className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all shadow-sm"
+                  className={`w-full px-4 py-3 border rounded-2xl focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all shadow-sm ${dark ? 'bg-slate-700 border-slate-600 text-slate-200 placeholder-slate-500' : 'bg-slate-50 border-slate-200'}`}
                 />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                  <label className="text-sm font-bold text-slate-700 flex items-center gap-2">
+                  <label className={`text-sm font-bold flex items-center gap-2 ${dark ? 'text-slate-300' : 'text-slate-700'}`}>
                     <Calendar size={16} className="text-indigo-500" />
                     Deadline <span className="text-red-500">*</span>
                   </label>
@@ -311,18 +311,18 @@ const Tugas = () => {
                     type="date"
                     value={form.deadline}
                     onChange={e => setForm({ ...form, deadline: e.target.value })}
-                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all shadow-sm"
+                    className={`w-full px-4 py-3 border rounded-2xl focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all shadow-sm ${dark ? 'bg-slate-700 border-slate-600 text-slate-200' : 'bg-slate-50 border-slate-200'}`}
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-sm font-bold text-slate-700 flex items-center gap-2">
+                  <label className={`text-sm font-bold flex items-center gap-2 ${dark ? 'text-slate-300' : 'text-slate-700'}`}>
                     <Flag size={16} className="text-indigo-500" />
                     Prioritas
                   </label>
                   <select
                     value={form.priority}
                     onChange={e => setForm({ ...form, priority: e.target.value as any })}
-                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all text-slate-700"
+                    className={`w-full px-4 py-3 border rounded-2xl focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all ${dark ? 'bg-slate-700 border-slate-600 text-slate-200' : 'bg-slate-50 border-slate-200 text-slate-700'}`}
                   >
                     <option>Tinggi</option>
                     <option>Sedang</option>
@@ -334,14 +334,14 @@ const Tugas = () => {
                 <button
                   type="button"
                   onClick={() => setShowAddModal(false)}
-                  className="flex-1 py-4 border border-slate-200 text-slate-600 rounded-2xl font-bold hover:bg-slate-50 transition-all active:scale-[0.98]"
+                  className={`flex-1 py-4 border rounded-2xl font-bold transition-all active:scale-[0.98] ${dark ? 'border-slate-600 text-slate-300 hover:bg-slate-700' : 'border-slate-200 text-slate-600 hover:bg-slate-50'}`}
                 >
                   Batal
                 </button>
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="flex-1 py-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl font-bold shadow-xl shadow-indigo-200 transition-all transform hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-70"
+                  className={`flex-1 py-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl font-bold shadow-xl transition-all transform hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-70 ${dark ? 'shadow-indigo-900/30' : 'shadow-indigo-200'}`}
                 >
                   {submitting ? (
                     <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
@@ -362,35 +362,35 @@ const Tugas = () => {
       {showDetailModal && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-[999] p-4">
           <div className={`rounded-2xl shadow-2xl w-full max-w-md ${dark ? 'bg-slate-800' : 'bg-white'}`}>
-            <div className="flex justify-between items-center p-6 border-b border-slate-100">
-              <h2 className="text-xl font-bold text-slate-800">Detail & Progress Tugas</h2>
-              <button onClick={() => setShowDetailModal(null)} className="p-2 text-slate-400 hover:bg-slate-100 rounded-xl"><X size={20} /></button>
+            <div className={`flex justify-between items-center p-6 border-b ${dark ? 'border-slate-700' : 'border-slate-100'}`}>
+              <h2 className={`text-xl font-bold ${dark ? 'text-slate-100' : 'text-slate-800'}`}>Detail & Progress Tugas</h2>
+              <button onClick={() => setShowDetailModal(null)} className={`p-2 rounded-xl ${dark ? 'text-slate-400 hover:bg-slate-700' : 'text-slate-400 hover:bg-slate-100'}`}><X size={20} /></button>
             </div>
             <div className="p-6 space-y-4">
-              <div className="bg-slate-50 p-4 rounded-xl space-y-2">
-                <p className="text-lg font-bold text-slate-800">{showDetailModal.title}</p>
-                <p className="text-sm text-slate-500">{showDetailModal.course?.name}</p>
+              <div className={`p-4 rounded-xl space-y-2 ${dark ? 'bg-slate-700' : 'bg-slate-50'}`}>
+                <p className={`text-lg font-bold ${dark ? 'text-slate-100' : 'text-slate-800'}`}>{showDetailModal.title}</p>
+                <p className={`text-sm ${dark ? 'text-slate-400' : 'text-slate-500'}`}>{showDetailModal.course?.name}</p>
                 <div className="flex gap-3">
                   <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${statusColors[showDetailModal.status]}`}>{showDetailModal.status}</span>
                   <span className={`px-2.5 py-1 rounded-md text-xs font-semibold ${priorityColors[showDetailModal.priority]}`}>{showDetailModal.priority}</span>
                 </div>
-                <p className="text-xs text-slate-500">Deadline: {formatDate(showDetailModal.deadline)}</p>
+                <p className={`text-xs ${dark ? 'text-slate-400' : 'text-slate-500'}`}>Deadline: {formatDate(showDetailModal.deadline)}</p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-2">Progress: <span className="text-indigo-600 font-bold">{progressEdit.progress}%</span></label>
+                <label className={`block text-sm font-medium mb-2 ${dark ? 'text-slate-300' : 'text-slate-700'}`}>Progress: <span className="text-indigo-600 font-bold">{progressEdit.progress}%</span></label>
                 <input type="range" min={0} max={100} value={progressEdit.progress}
                   onChange={e => setProgressEdit({ ...progressEdit, progress: Number(e.target.value) })}
                   className="w-full accent-indigo-600" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1.5">Status</label>
+                <label className={`block text-sm font-medium mb-1.5 ${dark ? 'text-slate-300' : 'text-slate-700'}`}>Status</label>
                 <select value={progressEdit.status} onChange={e => setProgressEdit({ ...progressEdit, status: e.target.value as Task['status'] })}
-                  className="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:outline-none focus:border-indigo-500 text-slate-700">
+                  className={`w-full px-4 py-2.5 border rounded-xl focus:outline-none focus:border-indigo-500 ${dark ? 'bg-slate-700 border-slate-600 text-slate-200' : 'border-slate-200 text-slate-700'}`}>
                   <option>Belum Dikerjakan</option><option>Proses</option><option>Selesai</option>
                 </select>
               </div>
               <div className="flex gap-3 pt-2">
-                <button onClick={() => setShowDetailModal(null)} className="flex-1 py-2.5 border border-slate-200 text-slate-600 rounded-xl font-medium hover:bg-slate-50">Tutup</button>
+                <button onClick={() => setShowDetailModal(null)} className={`flex-1 py-2.5 border rounded-xl font-medium ${dark ? 'border-slate-600 text-slate-300 hover:bg-slate-700' : 'border-slate-200 text-slate-600 hover:bg-slate-50'}`}>Tutup</button>
                 <button onClick={handleUpdateProgress} disabled={submitting} className="flex-1 py-2.5 bg-indigo-600 text-white rounded-xl font-semibold disabled:opacity-60">
                   {submitting ? 'Menyimpan...' : 'Update Progress'}
                 </button>
@@ -404,31 +404,31 @@ const Tugas = () => {
       {showEditModal && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-[999] p-4 animate-in fade-in duration-300">
           <div className={`rounded-3xl shadow-2xl w-full max-w-md overflow-hidden animate-in zoom-in-95 duration-300 ${dark ? 'bg-slate-800' : 'bg-white'}`}>
-            <div className="flex justify-between items-center p-8 border-b border-slate-100 bg-slate-50/50">
+            <div className={`flex justify-between items-center p-8 border-b ${dark ? 'border-slate-700 bg-slate-800' : 'border-slate-100 bg-slate-50/50'}`}>
               <div>
-                <h2 className="text-2xl font-bold text-slate-800">Edit Tugas</h2>
-                <p className="text-sm text-slate-500 mt-1">Perbarui informasi tugas kamu.</p>
+                <h2 className={`text-2xl font-bold ${dark ? 'text-slate-100' : 'text-slate-800'}`}>Edit Tugas</h2>
+                <p className={`text-sm mt-1 ${dark ? 'text-slate-400' : 'text-slate-500'}`}>Perbarui informasi tugas kamu.</p>
               </div>
-              <button onClick={() => setShowEditModal(null)} className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-xl transition-colors">
+              <button onClick={() => setShowEditModal(null)} className={`p-2 rounded-xl transition-colors ${dark ? 'text-slate-400 hover:text-slate-200 hover:bg-slate-700' : 'text-slate-400 hover:text-slate-600 hover:bg-slate-100'}`}>
                 <X size={24} />
               </button>
             </div>
             <form onSubmit={handleEdit} className="p-8 space-y-6">
               <div className="space-y-1.5">
-                <label className="text-sm font-bold text-slate-700 flex items-center gap-2">
+                <label className={`text-sm font-bold flex items-center gap-2 ${dark ? 'text-slate-300' : 'text-slate-700'}`}>
                   <BookOpen size={16} className="text-indigo-500" />
                   Mata Kuliah
                 </label>
                 <select
                   value={editForm.course_id}
                   onChange={e => setEditForm({ ...editForm, course_id: Number(e.target.value) })}
-                  className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all text-slate-700"
+                  className={`w-full px-4 py-3 border rounded-2xl focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all ${dark ? 'bg-slate-700 border-slate-600 text-slate-200' : 'bg-slate-50 border-slate-200 text-slate-700'}`}
                 >
                   {courses.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                 </select>
               </div>
               <div className="space-y-1.5">
-                <label className="text-sm font-bold text-slate-700 flex items-center gap-2">
+                <label className={`text-sm font-bold flex items-center gap-2 ${dark ? 'text-slate-300' : 'text-slate-700'}`}>
                   <ListTodo size={16} className="text-indigo-500" />
                   Judul Tugas
                 </label>
@@ -436,12 +436,12 @@ const Tugas = () => {
                   type="text"
                   value={editForm.title}
                   onChange={e => setEditForm({ ...editForm, title: e.target.value })}
-                  className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all shadow-sm"
+                  className={`w-full px-4 py-3 border rounded-2xl focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all shadow-sm ${dark ? 'bg-slate-700 border-slate-600 text-slate-200' : 'bg-slate-50 border-slate-200'}`}
                 />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                  <label className="text-sm font-bold text-slate-700 flex items-center gap-2">
+                  <label className={`text-sm font-bold flex items-center gap-2 ${dark ? 'text-slate-300' : 'text-slate-700'}`}>
                     <Calendar size={16} className="text-indigo-500" />
                     Deadline
                   </label>
@@ -449,18 +449,18 @@ const Tugas = () => {
                     type="date"
                     value={editForm.deadline}
                     onChange={e => setEditForm({ ...editForm, deadline: e.target.value })}
-                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all shadow-sm"
+                    className={`w-full px-4 py-3 border rounded-2xl focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all shadow-sm ${dark ? 'bg-slate-700 border-slate-600 text-slate-200' : 'bg-slate-50 border-slate-200'}`}
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-sm font-bold text-slate-700 flex items-center gap-2">
+                  <label className={`text-sm font-bold flex items-center gap-2 ${dark ? 'text-slate-300' : 'text-slate-700'}`}>
                     <Flag size={16} className="text-indigo-500" />
                     Prioritas
                   </label>
                   <select
                     value={editForm.priority}
                     onChange={e => setEditForm({ ...editForm, priority: e.target.value as any })}
-                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all text-slate-700"
+                    className={`w-full px-4 py-3 border rounded-2xl focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all ${dark ? 'bg-slate-700 border-slate-600 text-slate-200' : 'bg-slate-50 border-slate-200 text-slate-700'}`}
                   >
                     <option>Tinggi</option>
                     <option>Sedang</option>
@@ -472,14 +472,14 @@ const Tugas = () => {
                 <button
                   type="button"
                   onClick={() => setShowEditModal(null)}
-                  className="flex-1 py-4 border border-slate-200 text-slate-600 rounded-2xl font-bold hover:bg-slate-50 transition-all active:scale-[0.98]"
+                  className={`flex-1 py-4 border rounded-2xl font-bold transition-all active:scale-[0.98] ${dark ? 'border-slate-600 text-slate-300 hover:bg-slate-700' : 'border-slate-200 text-slate-600 hover:bg-slate-50'}`}
                 >
                   Batal
                 </button>
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="flex-1 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl font-bold shadow-xl shadow-blue-200 transition-all transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-60 flex items-center justify-center gap-2"
+                  className={`flex-1 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl font-bold shadow-xl transition-all transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-60 flex items-center justify-center gap-2 ${dark ? 'shadow-blue-900/30' : 'shadow-blue-200'}`}
                 >
                   {submitting ? (
                     <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
@@ -500,11 +500,11 @@ const Tugas = () => {
       {deleteConfirm && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-[999] p-4">
           <div className={`rounded-2xl shadow-2xl w-full max-w-sm p-6 text-center ${dark ? 'bg-slate-800' : 'bg-white'}`}>
-            <div className="flex items-center justify-center w-16 h-16 bg-red-50 rounded-full mx-auto mb-4"><Trash2 size={28} className="text-red-500" /></div>
-            <h3 className="text-xl font-bold text-slate-800 mb-2">Hapus Tugas?</h3>
-            <p className="text-slate-500 text-sm mb-6">Tugas <strong>{deleteConfirm.title}</strong> akan dihapus permanen.</p>
+            <div className={`flex items-center justify-center w-16 h-16 rounded-full mx-auto mb-4 ${dark ? 'bg-red-900/30' : 'bg-red-50'}`}><Trash2 size={28} className="text-red-500" /></div>
+            <h3 className={`text-xl font-bold mb-2 ${dark ? 'text-slate-100' : 'text-slate-800'}`}>Hapus Tugas?</h3>
+            <p className={`text-sm mb-6 ${dark ? 'text-slate-400' : 'text-slate-500'}`}>Tugas <strong>{deleteConfirm.title}</strong> akan dihapus permanen.</p>
             <div className="flex gap-3">
-              <button onClick={() => setDeleteConfirm(null)} className="flex-1 py-2.5 border border-slate-200 text-slate-600 rounded-xl font-medium hover:bg-slate-50">Batal</button>
+              <button onClick={() => setDeleteConfirm(null)} className={`flex-1 py-2.5 border rounded-xl font-medium ${dark ? 'border-slate-600 text-slate-300 hover:bg-slate-700' : 'border-slate-200 text-slate-600 hover:bg-slate-50'}`}>Batal</button>
               <button onClick={() => handleDelete(deleteConfirm)} className="flex-1 py-2.5 bg-red-600 text-white rounded-xl font-semibold">Ya, Hapus</button>
             </div>
           </div>

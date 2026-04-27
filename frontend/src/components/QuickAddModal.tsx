@@ -100,7 +100,7 @@ const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose, initialT
         <div className={`relative border-b ${dark ? 'border-slate-700' : 'border-slate-100'}`}>
           <button 
             onClick={onClose}
-            className="absolute right-4 top-4 p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-full transition-colors z-10"
+            className={`absolute right-4 top-4 p-2 rounded-full transition-colors z-10 ${dark ? 'text-slate-400 hover:text-slate-200 hover:bg-slate-700' : 'text-slate-400 hover:text-slate-600 hover:bg-slate-100'}`}
           >
             <X size={20} />
           </button>
@@ -110,8 +110,8 @@ const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose, initialT
               onClick={() => setActiveTab('task')}
               className={`flex-1 flex items-center justify-center gap-2 py-4 rounded-2xl font-bold transition-all ${
                 activeTab === 'task' 
-                ? 'bg-indigo-50 text-indigo-600' 
-                : 'text-slate-400 hover:text-slate-600 hover:bg-slate-50'
+                ? dark ? 'bg-indigo-500/20 text-indigo-400' : 'bg-indigo-50 text-indigo-600'
+                : dark ? 'text-slate-400 hover:text-slate-200 hover:bg-slate-700' : 'text-slate-400 hover:text-slate-600 hover:bg-slate-50'
               }`}
             >
               <ListTodo size={20} />
@@ -121,8 +121,8 @@ const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose, initialT
               onClick={() => setActiveTab('course')}
               className={`flex-1 flex items-center justify-center gap-2 py-4 rounded-2xl font-bold transition-all ${
                 activeTab === 'course' 
-                ? 'bg-emerald-50 text-emerald-600' 
-                : 'text-slate-400 hover:text-slate-600 hover:bg-slate-50'
+                ? dark ? 'bg-emerald-500/20 text-emerald-400' : 'bg-emerald-50 text-emerald-600'
+                : dark ? 'text-slate-400 hover:text-slate-200 hover:bg-slate-700' : 'text-slate-400 hover:text-slate-600 hover:bg-slate-50'
               }`}
             >
               <BookOpen size={20} />
@@ -136,7 +136,7 @@ const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose, initialT
           {activeTab === 'task' ? (
             <form onSubmit={handleTaskSubmit} className="space-y-5">
               <div className="space-y-1.5">
-                <label className="text-sm font-bold text-slate-700 flex items-center gap-2">
+                <label className={`text-sm font-bold flex items-center gap-2 ${dark ? 'text-slate-300' : 'text-slate-700'}`}>
                   <BookOpen size={16} className="text-indigo-500" />
                   Mata Kuliah
                 </label>
@@ -144,7 +144,7 @@ const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose, initialT
                   required
                   value={taskForm.course_id}
                   onChange={e => setTaskForm({...taskForm, course_id: Number(e.target.value)})}
-                  className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all text-slate-700"
+                  className={`w-full px-4 py-3 border rounded-2xl focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all ${dark ? 'bg-slate-700 border-slate-600 text-slate-200' : 'bg-slate-50 border-slate-200 text-slate-700'}`}
                 >
                   <option value={0} disabled>Pilih mata kuliah...</option>
                   {courses.map(c => (
@@ -154,7 +154,7 @@ const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose, initialT
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-sm font-bold text-slate-700 flex items-center gap-2">
+                <label className={`text-sm font-bold flex items-center gap-2 ${dark ? 'text-slate-300' : 'text-slate-700'}`}>
                   <Plus size={16} className="text-indigo-500" />
                   Judul Tugas
                 </label>
@@ -164,13 +164,13 @@ const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose, initialT
                   placeholder="E.g. Membuat Laporan Akhir Praktikum"
                   value={taskForm.title}
                   onChange={e => setTaskForm({...taskForm, title: e.target.value})}
-                  className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all"
+                  className={`w-full px-4 py-3 border rounded-2xl focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all ${dark ? 'bg-slate-700 border-slate-600 text-slate-200 placeholder-slate-500' : 'bg-slate-50 border-slate-200'}`}
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                  <label className="text-sm font-bold text-slate-700 flex items-center gap-2">
+                  <label className={`text-sm font-bold flex items-center gap-2 ${dark ? 'text-slate-300' : 'text-slate-700'}`}>
                     <Calendar size={16} className="text-indigo-500" />
                     Deadline
                   </label>
@@ -179,18 +179,18 @@ const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose, initialT
                     type="date"
                     value={taskForm.deadline}
                     onChange={e => setTaskForm({...taskForm, deadline: e.target.value})}
-                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all"
+                    className={`w-full px-4 py-3 border rounded-2xl focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all ${dark ? 'bg-slate-700 border-slate-600 text-slate-200' : 'bg-slate-50 border-slate-200'}`}
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-sm font-bold text-slate-700 flex items-center gap-2">
+                  <label className={`text-sm font-bold flex items-center gap-2 ${dark ? 'text-slate-300' : 'text-slate-700'}`}>
                     <Flag size={16} className="text-indigo-500" />
                     Prioritas
                   </label>
                   <select 
                     value={taskForm.priority}
                     onChange={e => setTaskForm({...taskForm, priority: e.target.value as any})}
-                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all text-slate-700"
+                    className={`w-full px-4 py-3 border rounded-2xl focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all ${dark ? 'bg-slate-700 border-slate-600 text-slate-200' : 'bg-slate-50 border-slate-200 text-slate-700'}`}
                   >
                     <option>Tinggi</option>
                     <option>Sedang</option>
@@ -202,7 +202,7 @@ const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose, initialT
               <button 
                 type="submit"
                 disabled={loading}
-                className="w-full py-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl font-bold shadow-xl shadow-indigo-200 transition-all transform hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-70"
+                className={`w-full py-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl font-bold shadow-xl transition-all transform hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-70 ${dark ? 'shadow-indigo-900/30' : 'shadow-indigo-200'}`}
               >
                 {loading ? (
                   <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
@@ -217,7 +217,7 @@ const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose, initialT
           ) : (
             <form onSubmit={handleCourseSubmit} className="space-y-5">
               <div className="space-y-1.5">
-                <label className="text-sm font-bold text-slate-700 flex items-center gap-2">
+                <label className={`text-sm font-bold flex items-center gap-2 ${dark ? 'text-slate-300' : 'text-slate-700'}`}>
                   <BookOpen size={16} className="text-emerald-500" />
                   Nama Mata Kuliah
                 </label>
@@ -227,12 +227,12 @@ const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose, initialT
                   placeholder="E.g. Pemrograman Web Lanjut"
                   value={courseForm.name}
                   onChange={e => setCourseForm({...courseForm, name: e.target.value})}
-                  className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all"
+                  className={`w-full px-4 py-3 border rounded-2xl focus:outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all ${dark ? 'bg-slate-700 border-slate-600 text-slate-200 placeholder-slate-500' : 'bg-slate-50 border-slate-200'}`}
                 />
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-sm font-bold text-slate-700 flex items-center gap-2">
+                <label className={`text-sm font-bold flex items-center gap-2 ${dark ? 'text-slate-300' : 'text-slate-700'}`}>
                   <User size={16} className="text-emerald-500" />
                   Nama Dosen
                 </label>
@@ -241,12 +241,12 @@ const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose, initialT
                   placeholder="E.g. Dr. Surya Pratama"
                   value={courseForm.lecturer_name}
                   onChange={e => setCourseForm({...courseForm, lecturer_name: e.target.value})}
-                  className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all"
+                  className={`w-full px-4 py-3 border rounded-2xl focus:outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all ${dark ? 'bg-slate-700 border-slate-600 text-slate-200 placeholder-slate-500' : 'bg-slate-50 border-slate-200'}`}
                 />
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-sm font-bold text-slate-700 flex items-center gap-2">
+                <label className={`text-sm font-bold flex items-center gap-2 ${dark ? 'text-slate-300' : 'text-slate-700'}`}>
                   <GraduationCap size={16} className="text-emerald-500" />
                   Semester
                 </label>
@@ -257,14 +257,14 @@ const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose, initialT
                   max={14}
                   value={courseForm.semester}
                   onChange={e => setCourseForm({...courseForm, semester: Number(e.target.value)})}
-                  className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all"
+                  className={`w-full px-4 py-3 border rounded-2xl focus:outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all ${dark ? 'bg-slate-700 border-slate-600 text-slate-200' : 'bg-slate-50 border-slate-200'}`}
                 />
               </div>
 
               <button 
                 type="submit"
                 disabled={loading}
-                className="w-full py-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl font-bold shadow-xl shadow-emerald-200 transition-all transform hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-70"
+                className={`w-full py-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl font-bold shadow-xl transition-all transform hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-70 ${dark ? 'shadow-emerald-900/30' : 'shadow-emerald-200'}`}
               >
                 {loading ? (
                   <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
