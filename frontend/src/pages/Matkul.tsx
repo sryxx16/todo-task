@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { courseApi, type Course } from '../services/api';
-import { BookOpen, Plus, User, GraduationCap, MoreVertical, Search, AlertCircle, Trash2, X, ChevronDown } from 'lucide-react';
+import { BookOpen, Plus, User, GraduationCap, MoreVertical, Search, AlertCircle, Trash2, X } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
+import ProfileBadge from '../components/ProfileBadge';
 
 const courseColors = [
     { bg: 'bg-indigo-50', icon: 'bg-indigo-600 text-white', bar: 'bg-indigo-600', badge: 'text-indigo-600' },
@@ -91,11 +92,7 @@ const Matkul = () => {
                         <div className={`flex items-center gap-2 px-4 py-2 rounded-lg shadow-sm border ${headerBarCls}`}>
                             <span className="text-sm font-medium">{today}</span>
                         </div>
-                        <div className={`flex items-center gap-3 px-3 py-1.5 rounded-lg shadow-sm border ${headerBarCls}`}>
-                            <img src="https://ui-avatars.com/api/?name=Surya&background=6366f1&color=fff" alt="Surya" className="w-8 h-8 rounded-full" />
-                            <span className={`font-medium ${dark ? 'text-slate-200' : 'text-slate-700'}`}>Surya</span>
-                            <ChevronDown size={16} className={dark ? 'text-slate-500' : 'text-slate-400'} />
-                        </div>
+                        <ProfileBadge dark={dark} />
                     </div>
                 </div>
 

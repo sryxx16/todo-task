@@ -2,9 +2,11 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\TaskController;
 use App\Http\Controllers\Api\CourseController;
 use App\Http\Controllers\Api\DashboardController;
+use App\Http\Controllers\Api\NotificationSettingController;
 
 // Handle CORS preflight OPTIONS request untuk semua route API
 Route::options('{any}', function () {
@@ -14,6 +16,12 @@ Route::options('{any}', function () {
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
+
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login']);
+Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
+Route::get('/notification-settings', [NotificationSettingController::class, 'show'])->middleware('auth:sanctum');
+Route::put('/notification-settings', [NotificationSettingController::class, 'update'])->middleware('auth:sanctum');
 
 // Endpoint Dashboard
 Route::get('/dashboard', [DashboardController::class, 'index']);

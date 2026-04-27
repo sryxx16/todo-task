@@ -4,6 +4,7 @@ import { useTheme } from "../../contexts/ThemeContext";
 
 export const PROFILE_STORAGE_KEY = "todoo_user_profile";
 export const PROFILE_UPDATED_EVENT = "todoo-profile-updated";
+const AUTH_USER_STORAGE_KEY = "auth_user";
 
 export interface UserProfile {
   fullName: string;
@@ -14,11 +15,45 @@ export interface UserProfile {
 }
 
 export const DEFAULT_PROFILE: UserProfile = {
-  fullName: "Surya Pratama",
-  username: "surya_p",
-  email: "surya.pratama@student.ac.id",
+  fullName: "",
+  username: "",
+  email: "",
   bio: "",
   avatar: "",
+};
+
+interface StoredAuthUser {
+  id?: number | string;
+  name?: string;
+  email?: string;
+}
+
+const readAuthUser = (): StoredAuthUser | null => {
+  try {
+    const saved = localStorage.getItem(AUTH_USER_STORAGE_KEY);
+    return saved ? JSON.parse(saved) : null;
+  } catch {
+    return null;
+  }
+};
+
+const buildProfileFromAuthUser = (): UserProfile => {
+  const authUser = readAuthUser();
+  const email = authUser?.email || "";
+
+  return {
+    ...DEFAULT_PROFILE,
+    fullName: authUser?.name || "",
+    username: email ? email.split("@")[0] : "",
+    email,
+  };
+};
+
+const getProfileStorageKey = () => {
+  const authUser = readAuthUser();
+  const userKey = authUser?.id || authUser?.email;
+
+  return userKey ? `${PROFILE_STORAGE_KEY}_${userKey}` : PROFILE_STORAGE_KEY;
 };
 
 export const getProfileAvatar = (profile: UserProfile) => {
@@ -28,13 +63,15 @@ export const getProfileAvatar = (profile: UserProfile) => {
 };
 
 export const readStoredProfile = (): UserProfile => {
-  try {
-    const saved = localStorage.getItem(PROFILE_STORAGE_KEY);
-    if (!saved) return DEFAULT_PROFILE;
+  const baseProfile = buildProfileFromAuthUser();
 
-    return { ...DEFAULT_PROFILE, ...JSON.parse(saved) };
+  try {
+    const saved = localStorage.getItem(getProfileStorageKey());
+    if (!saved) return baseProfile;
+
+    return { ...baseProfile, ...JSON.parse(saved) };
   } catch {
-    return DEFAULT_PROFILE;
+    return baseProfile;
   }
 };
 
@@ -58,7 +95,7 @@ const Profil = () => {
   };
 
   const saveProfile = (nextProfile: UserProfile) => {
-    localStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify(nextProfile));
+    localStorage.setItem(getProfileStorageKey(), JSON.stringify(nextProfile));
     window.dispatchEvent(new CustomEvent(PROFILE_UPDATED_EVENT, { detail: nextProfile }));
   };
 

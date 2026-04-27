@@ -10,13 +10,14 @@ use Illuminate\Http\Request;
 class TaskController extends Controller
 {
     // 1. Tampilkan semua tugas
-    public function index()
+   public function index()
     {
-        $tasks = Task::with('course')->orderBy('deadline', 'asc')->get();
-        return response()->json([
-            'status' => 'success',
-            'data' => $tasks
-        ]);
+        // HANYA ambil tugas milik user yang sedang login
+        $tasks = Task::where('user_id', auth()->id())
+                     ->with('course')
+                     ->orderBy('deadline', 'asc')
+                     ->get();
+        return response()->json(['status' => 'success', 'data' => $tasks]);
     }
 
     // 2. Tampilkan semua mata kuliah (Buat pilihan di form)
@@ -39,27 +40,29 @@ class TaskController extends Controller
         ]);
 
         $task = Task::create([
+            'user_id' => auth()->id(), // SIMPAN ID USER!
             'course_id' => $validated['course_id'],
             'title' => $validated['title'],
             'deadline' => $validated['deadline'],
             'priority' => $validated['priority'],
-            'status' => 'Belum Dikerjakan', // Default pas awal bikin
+            'status' => 'Belum Dikerjakan',
             'progress' => 0
         ]);
 
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Tugas berhasil ditambahkan!',
-            'data' => $task->load('course')
-        ], 201);
+        return response()->json(['status' => 'success', 'data' => $task->load('course')], 201);
     }
 
     // 4. Update data tugas (Misal salah nulis judul atau ganti deadline)
     public function update(Request $request, $id)
     {
         $task = Task::findOrFail($id);
+        $oldDeadline = $task->deadline;
 
         $task->update($request->only(['title', 'course_id', 'deadline', 'priority']));
+
+        if ($request->filled('deadline') && $oldDeadline != $task->deadline) {
+            $task->forceFill(['deadline_email_sent_at' => null])->save();
+        }
 
         return response()->json([
             'status' => 'success',

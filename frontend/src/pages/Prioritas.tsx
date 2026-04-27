@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { taskApi, type Task } from '../services/api';
 import { Flag, Eye, Edit, Trash2, ChevronDown, ChevronUp, Calendar as CalendarIcon, Clock, CheckCircle2, Target, AlertCircle } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
+import ProfileBadge from '../components/ProfileBadge';
 
 const getDaysLeft = (d: string) => Math.ceil((new Date(d).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
 const getDaysColor = (d: number) => d <= 2 ? 'text-red-500' : d <= 7 ? 'text-amber-500' : 'text-emerald-500';
@@ -112,10 +113,7 @@ const Prioritas = () => {
             <div className={`flex items-center gap-2 px-4 py-2 rounded-lg shadow-sm border ${dark ? 'bg-slate-800 border-slate-700 text-slate-300' : 'bg-white border-slate-100 text-slate-500'}`}>
               <span className="text-sm font-medium">{today}</span>
             </div>
-            <div className={`flex items-center gap-3 px-3 py-1.5 rounded-lg shadow-sm border ${dark ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-100'}`}>
-              <img src="https://ui-avatars.com/api/?name=Surya&background=6366f1&color=fff" alt="Surya" className="w-8 h-8 rounded-full" />
-              <span className={`font-medium ${dark ? 'text-slate-200' : 'text-slate-700'}`}>Surya</span>
-            </div>
+            <ProfileBadge dark={dark} showChevron={false} />
           </div>
         </div>
 

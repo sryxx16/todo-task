@@ -1,10 +1,11 @@
 import { useState, useEffect, useCallback } from "react";
 import { Bell, CheckCircle, BellRing } from "lucide-react";
 import { useTheme } from "../../contexts/ThemeContext";
-import { taskApi, type Task } from "../../services/api";
+import { notificationSettingsApi, taskApi, type Task } from "../../services/api";
 
 interface NotifState {
   deadline: boolean;
+  emailDeadline: boolean;
   tugasBaru: boolean;
   penyelesaian: boolean;
 }
@@ -16,7 +17,7 @@ const Notifikasi = () => {
   const [notif, setNotif] = useState<NotifState>(() => {
     const saved = localStorage.getItem("todoo_notif_settings");
     if (saved) return JSON.parse(saved);
-    return { deadline: true, tugasBaru: true, penyelesaian: true };
+    return { deadline: true, emailDeadline: true, tugasBaru: true, penyelesaian: true };
   });
 
   const [toast, setToast] = useState<string | null>(null);
@@ -26,6 +27,22 @@ const Notifikasi = () => {
 
   useEffect(() => { localStorage.setItem("todoo_notif_settings", JSON.stringify(notif)); }, [notif]);
   useEffect(() => { if (toast) { const ti = setTimeout(() => setToast(null), 3000); return () => clearTimeout(ti); } }, [toast]);
+
+  useEffect(() => {
+    const fetchEmailSetting = async () => {
+      try {
+        const response = await notificationSettingsApi.get();
+        setNotif((prev) => ({
+          ...prev,
+          emailDeadline: response.data.data.deadline_email_notifications,
+        }));
+      } catch {
+        // User may be offline or the backend may not have run the new migration yet.
+      }
+    };
+
+    fetchEmailSetting();
+  }, []);
 
   // Check deadlines and send browser notifications
   const checkDeadlines = useCallback(async () => {
@@ -86,6 +103,21 @@ const Notifikasi = () => {
     });
   };
 
+  const handleEmailToggle = async () => {
+    const nextValue = !notif.emailDeadline;
+    setNotif((prev) => ({ ...prev, emailDeadline: nextValue }));
+
+    try {
+      await notificationSettingsApi.update({
+        deadline_email_notifications: nextValue,
+      });
+      setToast(`Email deadline ${nextValue ? t("diaktifkan") : t("dinonaktifkan")}`);
+    } catch {
+      setNotif((prev) => ({ ...prev, emailDeadline: !nextValue }));
+      setToast("Gagal menyimpan pengaturan email");
+    }
+  };
+
   const handleRequestPermission = async () => {
     if (typeof Notification === "undefined") {
       setToast("Browser tidak mendukung notifikasi");
@@ -142,6 +174,20 @@ const Notifikasi = () => {
             </div>
           </div>
           <ToggleSwitch active={notif.deadline} onClick={() => handleToggle("deadline", t("notifDeadline"))} />
+        </div>
+
+        {/* Notifikasi Tugas Baru */}
+        <div className="flex items-center justify-between">
+          <div className="flex gap-3">
+            <div className={`w-10 h-10 rounded-full flex items-center justify-center ${dark ? 'bg-blue-900/50 text-blue-400' : 'bg-blue-50 text-blue-500'}`}>
+              <BellRing size={18} />
+            </div>
+            <div>
+              <h4 className={`font-medium ${dark ? 'text-slate-100' : 'text-slate-800'}`}>Email deadline</h4>
+              <p className={`text-xs ${dark ? 'text-slate-400' : 'text-slate-500'}`}>Kirim pengingat deadline ke email akun kamu.</p>
+            </div>
+          </div>
+          <ToggleSwitch active={notif.emailDeadline} onClick={handleEmailToggle} />
         </div>
 
         {/* Notifikasi Tugas Baru */}

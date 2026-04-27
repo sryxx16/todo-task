@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { taskApi, courseApi, type Task, type Course } from '../services/api';
 import { ClipboardList, Clock, RefreshCw, CheckCircle2, Calendar as CalendarIcon, CheckCircle, Target, ArrowUp, AlertCircle } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
+import ProfileBadge from '../components/ProfileBadge';
 
 const Statistik = () => {
   const { theme } = useTheme();
@@ -54,10 +55,7 @@ const Statistik = () => {
             <CalendarIcon size={18} />
             <span className="text-sm font-medium">{today}</span>
           </div>
-          <div className={`flex items-center gap-3 px-3 py-1.5 rounded-lg shadow-sm border ${dark ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-100'}`}>
-            <img src="https://ui-avatars.com/api/?name=Surya&background=6366f1&color=fff" alt="Surya" className="w-8 h-8 rounded-full" />
-            <span className={`font-medium ${dark ? 'text-slate-200' : 'text-slate-700'}`}>Surya</span>
-          </div>
+          <ProfileBadge dark={dark} showChevron={false} />
         </div>
       </div>
 

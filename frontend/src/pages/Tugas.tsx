@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { taskApi, courseApi, type Task, type Course } from '../services/api';
-import { Search, Eye, Edit, Trash2, Plus, AlertCircle, X, ChevronDown, BookOpen, ListTodo, Calendar, Flag } from 'lucide-react';
+import { Search, Eye, Edit, Trash2, Plus, AlertCircle, X, BookOpen, ListTodo, Calendar, Flag } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
+import ProfileBadge from '../components/ProfileBadge';
 
 const statusColors: Record<Task['status'], string> = {
   'Proses': 'bg-blue-50 text-blue-600',
@@ -136,11 +137,7 @@ const Tugas = () => {
             <div className={`flex items-center gap-2 px-4 py-2 rounded-lg shadow-sm border ${dark ? 'bg-slate-800 border-slate-700 text-slate-300' : 'bg-white border-slate-100 text-slate-500'}`}>
               <span className="text-sm font-medium">{today}</span>
             </div>
-            <div className={`flex items-center gap-3 px-3 py-1.5 rounded-lg shadow-sm border ${dark ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-100'}`}>
-              <img src="https://ui-avatars.com/api/?name=Surya&background=6366f1&color=fff" alt="Surya" className="w-8 h-8 rounded-full" />
-              <span className={`font-medium ${dark ? 'text-slate-200' : 'text-slate-700'}`}>Surya</span>
-              <ChevronDown size={16} className={dark ? 'text-slate-500' : 'text-slate-400'} />
-            </div>
+            <ProfileBadge dark={dark} />
           </div>
         </div>
 

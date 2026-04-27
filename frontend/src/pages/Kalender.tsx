@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 import { taskApi, type Task } from '../services/api';
-import { CalendarIcon, Plus, ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react';
+import { CalendarIcon, Plus, ChevronLeft, ChevronRight } from 'lucide-react';
 import QuickAddModal from '../components/QuickAddModal';
 import { useTheme } from '../contexts/ThemeContext';
+import ProfileBadge from '../components/ProfileBadge';
 
 const getDaysLeft = (d: string) => Math.ceil((new Date(d).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
 const getDaysLeftColor = (days: number) => days <= 2 ? 'text-red-500' : days <= 7 ? 'text-amber-500' : 'text-emerald-500';
@@ -101,11 +102,7 @@ const Kalender = () => {
               <CalendarIcon size={18} />
               <span className="text-sm font-medium">{todayStr}</span>
             </div>
-            <div className={`flex items-center gap-3 px-3 py-1.5 rounded-lg shadow-sm border ${dark ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-100'}`}>
-              <img src="https://ui-avatars.com/api/?name=Surya&background=6366f1&color=fff" alt="Surya" className="w-8 h-8 rounded-full" />
-              <span className={`font-medium ${dark ? 'text-slate-200' : 'text-slate-700'}`}>Surya</span>
-              <ChevronDown size={16} className={dark ? 'text-slate-500' : 'text-slate-400'} />
-            </div>
+            <ProfileBadge dark={dark} />
           </div>
         </div>
 
