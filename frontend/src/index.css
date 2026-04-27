@@ -13,12 +13,48 @@
   --color-primary-hover: #2563eb;
 }
 
-/* Styling Dasar Halaman */
+/* ========================
+   DARK MODE CSS VARIABLES
+   ======================== */
+
 @layer base {
+  /* Default Light Mode */
+  :root {
+    --bg-primary: #f8fafc;
+    --bg-card: #ffffff;
+    --bg-sidebar: #ffffff;
+    --bg-input: #ffffff;
+    --bg-hover: #f1f5f9;
+    --text-primary: #1e293b;
+    --text-secondary: #64748b;
+    --text-muted: #94a3b8;
+    --border-color: #f1f5f9;
+    --border-input: #e2e8f0;
+    --shadow-color: rgba(0, 0, 0, 0.05);
+  }
+
+  /* Dark Mode */
+  .dark {
+    --bg-primary: #0f172a;
+    --bg-card: #1e293b;
+    --bg-sidebar: #1e293b;
+    --bg-input: #334155;
+    --bg-hover: #334155;
+    --text-primary: #f1f5f9;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+    --border-color: #334155;
+    --border-input: #475569;
+    --shadow-color: rgba(0, 0, 0, 0.3);
+  }
+
   html,
   body {
-    @apply antialiased text-slate-800 bg-slate-50;
+    @apply antialiased;
+    color: var(--text-primary);
+    background-color: var(--bg-primary);
     scroll-behavior: smooth;
+    transition: background-color 0.3s ease, color 0.3s ease;
   }
 
   /* Bikin scrollbar-nya lebih elegan (opsional) */
@@ -32,8 +68,14 @@
   ::-webkit-scrollbar-thumb {
     @apply bg-slate-300 rounded-full;
   }
+  .dark ::-webkit-scrollbar-thumb {
+    @apply bg-slate-600 rounded-full;
+  }
   ::-webkit-scrollbar-thumb:hover {
     @apply bg-slate-400;
+  }
+  .dark ::-webkit-scrollbar-thumb:hover {
+    @apply bg-slate-500;
   }
 }
 
@@ -52,5 +94,29 @@
       opacity: 1;
       transform: translateY(0);
     }
+  }
+
+  /* Dark mode utility classes */
+  .dark-card {
+    background-color: var(--bg-card);
+    border-color: var(--border-color);
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+  }
+
+  .dark-input {
+    background-color: var(--bg-input);
+    border-color: var(--border-input);
+    color: var(--text-primary);
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+  }
+
+  .dark-text {
+    color: var(--text-primary);
+    transition: color 0.3s ease;
+  }
+
+  .dark-text-secondary {
+    color: var(--text-secondary);
+    transition: color 0.3s ease;
   }
 }

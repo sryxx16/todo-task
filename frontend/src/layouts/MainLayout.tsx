@@ -2,8 +2,10 @@ import { useState } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import QuickAddModal from "../components/QuickAddModal";
+import { useTheme } from "../contexts/ThemeContext";
 
 const MainLayout = () => {
+  const { theme } = useTheme();
   const [modalState, setModalState] = useState<{ isOpen: boolean; tab: 'task' | 'course' }>({
     isOpen: false,
     tab: 'task'
@@ -19,12 +21,12 @@ const MainLayout = () => {
 
   const handleSuccess = () => {
     setRefreshKey(prev => prev + 1);
-    // Jika kita di dashboard, mungkin mau redirect ke halaman yang sesuai atau cuma refresh data
+    // Jika kita di dashboard, mungkin mau redirect ke halaman yang sesuai atau coba refresh data
     // Untuk sekarang kita refresh outletnya saja pakai key
   };
 
   return (
-    <div className="flex min-h-screen bg-slate-50 font-sans text-slate-800">
+    <div className={`flex min-h-screen font-sans transition-colors duration-300 ${theme === 'dark' ? 'bg-slate-900 text-slate-100' : 'bg-slate-50 text-slate-800'}`}>
       {/* Sidebar tetap di kiri */}
       <Sidebar onQuickAdd={handleQuickAdd} />
 
